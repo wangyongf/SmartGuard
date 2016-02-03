@@ -3,6 +3,7 @@ package com.yongf.smartguard;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -11,6 +12,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -54,18 +56,35 @@ public class SplashActivity extends AppCompatActivity {
 
     private TextView tv_update_progress;
 
+    private SharedPreferences sp;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
+
+        sp = getSharedPreferences("config", MODE_PRIVATE);
 
         tv_splash_version = (TextView) findViewById(R.id.tv_splash_version);
         tv_splash_version.setText("版本号：" + getVersionName());
 
         tv_update_progress = (TextView) findViewById(R.id.tv_update_progress);
 
-        //检查升级
-        checkUpdate();
+        boolean update = sp.getBoolean("update", false);
+        if (update) {
+            //检查更新
+            checkUpdate();
+        } else {
+            //自动更新已经关闭
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    //进入主页面
+                   enterHome();
+                }
+            }, 2000);
+        }
+
 
         AlphaAnimation alphaAnimation = new AlphaAnimation(0.2f, 1.0f);
         alphaAnimation.setDuration(1000);
@@ -110,6 +129,15 @@ public class SplashActivity extends AppCompatActivity {
     private void showUpdateDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("新版本来了！");
+//        builder.setCancelable(false);       //强制升级
+        builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                //进入主页面
+                enterHome();
+                dialog.dismiss();
+            }
+        });
         builder.setMessage(description);
         builder.setPositiveButton("火速升级", new DialogInterface.OnClickListener() {
             @Override
@@ -123,6 +151,7 @@ public class SplashActivity extends AppCompatActivity {
                         @Override
                         public void onLoading(long count, long current) {
                             super.onLoading(count, current);
+                            tv_update_progress.setVisibility(View.VISIBLE);
                             //当前下载百分比
                             int progress = (int) (current * 100 / count);
 
@@ -131,6 +160,8 @@ public class SplashActivity extends AppCompatActivity {
 
                         @Override
                         public void onSuccess(File file) {
+                            tv_update_progress.setVisibility(View.GONE);
+
                             super.onSuccess(file);
 
                             installAPK(file);
@@ -151,6 +182,8 @@ public class SplashActivity extends AppCompatActivity {
 
                         @Override
                         public void onFailure(Throwable t, int errorNo, String strMsg) {
+                            tv_update_progress.setVisibility(View.GONE);
+
                             t.printStackTrace();
                             Toast.makeText(getApplicationContext(), "下载失败", Toast.LENGTH_LONG).show();
                             super.onFailure(t, errorNo, strMsg);

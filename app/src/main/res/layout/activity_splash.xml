@@ -27,6 +27,7 @@
         android:layout_height="wrap_content" />
 
     <TextView
+        android:visibility="gone"
         android:id="@+id/tv_update_progress"
         android:textColor="#000000"
         android:textSize="22sp"
