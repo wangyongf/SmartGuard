@@ -1,15 +1,21 @@
 package com.yongf.smartguard;
 
+import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -29,10 +35,20 @@ public class HomeActivity extends AppCompatActivity {
             R.mipmap.sysoptimize, R.mipmap.atools, R.mipmap.settings
     };
 
+    private SharedPreferences sp;
+
+    private EditText et_set_pwd;
+    private EditText et_pwd_confirm;
+    private Button btn_ok;
+    private Button btn_cancel;
+    private AlertDialog alertDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        sp = getSharedPreferences("config", MODE_PRIVATE);
 
         list_home = (GridView) findViewById(R.id.list_home);
         adapter = new MyAdapter();
@@ -46,12 +62,130 @@ public class HomeActivity extends AppCompatActivity {
                         startActivity(intent);
 
                         break;
-                    case 7:
-
+                    case 0:     //进入手机防盗页面
+                        showLostFindDialog();
                         break;
                 }
             }
         });
+    }
+
+    private void showLostFindDialog() {
+        //判断是否设置过密码
+        if (isPasswordSet()) {
+            //已经设置密码了，弹出的是输入框
+            showInputPwdDialog();
+        } else {
+            //没有设置密码，弹出的是设置密码对话框
+            showSetPwdDialog();
+        }
+    }
+
+    /**
+     * 设置密码对话框
+     */
+    private void showSetPwdDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(HomeActivity.this);
+        //自定义一个布局文件
+        View view = View.inflate(HomeActivity.this, R.layout.dialog_set_password, null);
+        et_set_pwd = (EditText) view.findViewById(R.id.et_set_pwd);
+        et_pwd_confirm = (EditText) view.findViewById(R.id.et_pwd_confirm);
+        btn_ok = (Button) view.findViewById(R.id.btn_ok);
+        btn_cancel = (Button) view.findViewById(R.id.btn_cancel);
+        btn_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //把对话框取消掉
+                alertDialog.dismiss();
+            }
+        });
+        btn_ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //取出密码
+                String pwd = et_set_pwd.getText().toString().trim();
+                String pwd_confirm = et_pwd_confirm.getText().toString().trim();
+                if (TextUtils.isEmpty(pwd)) {
+                    Toast.makeText(HomeActivity.this, "密码为空", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                //判断两次输入的密码是否一致
+                if (pwd.equals(pwd_confirm)) {
+                    //一致的话，就保存密码，把对话框消掉，进入手机防盗页面
+                    SharedPreferences.Editor editor = sp.edit();
+                    editor.putString("password", pwd);
+                    editor.commit();
+
+                    alertDialog.dismiss();
+
+                    System.out.println("一致的话，就保存密码，把对话框消掉，进入手机防盗页面");
+                } else {
+                    Toast.makeText(HomeActivity.this, "密码不一致", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+            }
+        });
+
+        alertDialog = builder.create();
+        alertDialog.setView(view, 0, 0, 0, 0);
+        alertDialog.show();
+    }
+
+    /**
+     * 输入密码对话框
+     */
+    private void showInputPwdDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(HomeActivity.this);
+        //自定义一个布局文件
+        View view = View.inflate(HomeActivity.this, R.layout.dialog_enter_password, null);
+        et_set_pwd = (EditText) view.findViewById(R.id.et_set_pwd);
+        btn_ok = (Button) view.findViewById(R.id.btn_ok);
+        btn_cancel = (Button) view.findViewById(R.id.btn_cancel);
+        btn_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //把对话框取消掉
+                alertDialog.dismiss();
+            }
+        });
+        btn_ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //取出密码
+                String pwd = et_set_pwd.getText().toString().trim();
+                String savedPwd = sp.getString("password", "");
+                if (TextUtils.isEmpty(pwd)) {
+                    Toast.makeText(HomeActivity.this, "密码为空", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (pwd.equals(savedPwd)) {
+                    //密码正确
+                    alertDialog.dismiss();
+                    System.out.println("把对话框消掉，进入主页面");
+                } else {
+                    Toast.makeText(HomeActivity.this, "密码错误", Toast.LENGTH_SHORT).show();
+                    et_set_pwd.setText("");
+                    return;
+                }
+            }
+        });
+
+        alertDialog = builder.create();
+        alertDialog.setView(view, 0, 0, 0, 0);
+        alertDialog.show();
+    }
+
+    /**
+     * 判断是否设置过密码
+     * @return 设置过密码返回true；否则返回false
+     */
+    private boolean isPasswordSet() {
+//        String password = sp.getString("password", null);
+//        if (TextUtils.isEmpty(password)) {
+//            return false;
+//        } else {
+//            return true;
+        return !TextUtils.isEmpty(sp.getString("password", null));
     }
 
     private class MyAdapter extends BaseAdapter {

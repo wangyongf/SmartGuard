@@ -21,6 +21,12 @@ public class SettingItemView extends RelativeLayout {
 
     private TextView tv_auto_update_desc;
 
+    private String desc_on;
+
+    private String desc_off;
+
+    private String title;
+
     /**
      * 初始化布局文件
      * @param context
@@ -38,9 +44,19 @@ public class SettingItemView extends RelativeLayout {
         initView(context);
     }
 
+    /**
+     * 带有两个参数的构造方法，布局文件使用的时候调用
+     * @param context
+     * @param attrs
+     */
     public SettingItemView(Context context, AttributeSet attrs) {
         super(context, attrs);
         initView(context);
+
+        title = attrs.getAttributeValue("http://schemas.android.com/apk/res/com.yongf.smartguard", "title");
+        desc_on = attrs.getAttributeValue("http://schemas.android.com/apk/res/com.yongf.smartguard", "desc_on");
+        desc_off = attrs.getAttributeValue("http://schemas.android.com/apk/res/com.yongf.smartguard", "desc_off");
+        tv_auto_update_title.setText(title);
     }
 
     public SettingItemView(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -61,6 +77,11 @@ public class SettingItemView extends RelativeLayout {
      * @param checked
      */
     public void setChecked(boolean checked) {
+        if (checked) {
+            setDesc(desc_on);
+        } else {
+            setDesc(desc_off);
+        }
         cb_status.setChecked(checked);
     }
 

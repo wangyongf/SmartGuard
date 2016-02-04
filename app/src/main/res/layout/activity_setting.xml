@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:yongf="http://schemas.android.com/apk/res/com.yongf.smartguard"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -16,6 +17,9 @@
         android:text="设置中心" />
 
     <com.yongf.smartguard.ui.SettingItemView
+        yongf:title="设置自动更新"
+        yongf:desc_on="自动更新已经开启"
+        yongf:desc_off="自动更新已经关闭"
         android:id="@+id/siv_update"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"></com.yongf.smartguard.ui.SettingItemView>
