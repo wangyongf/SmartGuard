@@ -57,6 +57,8 @@ public class SettingItemView extends RelativeLayout {
         desc_on = attrs.getAttributeValue("http://schemas.android.com/apk/res/com.yongf.smartguard", "desc_on");
         desc_off = attrs.getAttributeValue("http://schemas.android.com/apk/res/com.yongf.smartguard", "desc_off");
         tv_auto_update_title.setText(title);
+        //默认设置为关闭状态
+        setDesc(desc_off);
     }
 
     public SettingItemView(Context context, AttributeSet attrs, int defStyleAttr) {

@@ -17,6 +17,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.yongf.smartguard.utils.MD5Utils;
+
 public class HomeActivity extends AppCompatActivity {
 
     private GridView list_home;
@@ -113,12 +115,15 @@ public class HomeActivity extends AppCompatActivity {
                 if (pwd.equals(pwd_confirm)) {
                     //一致的话，就保存密码，把对话框消掉，进入手机防盗页面
                     SharedPreferences.Editor editor = sp.edit();
-                    editor.putString("password", pwd);
+                    editor.putString("password", MD5Utils.md5Password(pwd));      //保存加密后的密码
                     editor.commit();
 
                     alertDialog.dismiss();
 
                     System.out.println("一致的话，就保存密码，把对话框消掉，进入手机防盗页面");
+
+                    Intent intent = new Intent(HomeActivity.this, LostFindActivity.class);
+                    startActivity(intent);
                 } else {
                     Toast.makeText(HomeActivity.this, "密码不一致", Toast.LENGTH_SHORT).show();
                     return;
@@ -153,15 +158,17 @@ public class HomeActivity extends AppCompatActivity {
             public void onClick(View v) {
                 //取出密码
                 String pwd = et_set_pwd.getText().toString().trim();
-                String savedPwd = sp.getString("password", "");
+                String savedPwd = sp.getString("password", "");     //取出加密后的密码
                 if (TextUtils.isEmpty(pwd)) {
                     Toast.makeText(HomeActivity.this, "密码为空", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                if (pwd.equals(savedPwd)) {
+                if (MD5Utils.md5Password(pwd).equals(savedPwd)) {
                     //密码正确
                     alertDialog.dismiss();
-                    System.out.println("把对话框消掉，进入主页面");
+                    System.out.println("把对话框消掉，进入手机防盗页面");
+                    Intent intent = new Intent(HomeActivity.this, LostFindActivity.class);
+                    startActivity(intent);
                 } else {
                     Toast.makeText(HomeActivity.this, "密码错误", Toast.LENGTH_SHORT).show();
                     et_set_pwd.setText("");

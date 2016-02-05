@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:yongf="http://schemas.android.com/apk/res/com.yongf.smartguard"
+    android:orientation="vertical"
+    tools:context="com.yongf.smartguard.AntiTheftConfigureActivity1">
+
+    <TextView
+        android:id="@+id/tv_anti_theft_configure"
+        android:background="#8866ff00"
+        android:gravity="center"
+        android:text="2. 手机SIM卡绑定"
+        android:textColor="#000000"
+        android:textSize="22sp"
+        android:layout_width="fill_parent"
+        android:layout_height="55dip" />
+
+    <TextView
+        android:text="通过绑定SIM卡："
+        style="@style/anti_theft_config_text_content_style"
+        />
+
+    <TextView
+        android:text="下次重启手机，如果发现SIM卡变化\n就会发送报警短信"
+        style="@style/anti_theft_config_text_content_style"
+        />
+
+    <com.yongf.smartguard.ui.SettingItemView
+        yongf:title="点击绑定SIM卡"
+        yongf:desc_on="SIM卡已经绑定"
+        yongf:desc_off="SIM卡没有绑定"
+        android:id="@+id/siv_config2_sim"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"></com.yongf.smartguard.ui.SettingItemView>
+
+    <LinearLayout
+        android:layout_gravity="center_horizontal"
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:src="@android:drawable/presence_invisible"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <ImageView
+            android:src="@android:drawable/presence_online"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <ImageView
+            android:src="@android:drawable/presence_invisible"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <ImageView
+            android:src="@android:drawable/presence_invisible"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+
+        <ImageView
+            android:layout_centerInParent="true"
+            android:src="@mipmap/bind"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <Button
+            style="@style/anti_theft_config_button_pre_style"
+            />
+
+        <Button
+            style="@style/anti_theft_config_button_next_style"
+            />
+
+    </RelativeLayout>
+
+</LinearLayout>
