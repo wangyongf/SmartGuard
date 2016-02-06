@@ -5,10 +5,16 @@ import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 public class LostFindActivity extends AppCompatActivity {
 
     private SharedPreferences sp;
+
+    private TextView tv_safe_number;
+
+    private ImageView iv_protecting;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,6 +26,23 @@ public class LostFindActivity extends AppCompatActivity {
         if (configured) {
             //就在手机防盗页面
             setContentView(R.layout.activity_lost_find);
+
+            tv_safe_number = (TextView) findViewById(R.id.tv_safe_number);
+            iv_protecting = (ImageView) findViewById(R.id.iv_protecting);
+
+            //得到我们设置的安全号码
+            String safeNumber = sp.getString("safeNumber", "");
+            tv_safe_number.setText(safeNumber);
+
+            //设置防盗保护的状态
+            boolean protecting = sp.getBoolean("protecting", false);
+            if (protecting) {
+                //已经开启防盗保护
+                iv_protecting.setImageResource(R.mipmap.lock);
+            } else {
+                //没有开启防盗保护
+                iv_protecting.setImageResource(R.mipmap.unlock);
+            }
         } else {
             //还没有做过设置向导
             Intent intent = new Intent(this, AntiTheftConfigureActivity1.class);

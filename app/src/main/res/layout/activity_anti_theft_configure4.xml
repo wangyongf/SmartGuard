@@ -18,6 +18,7 @@
         android:layout_height="55dip" />
 
     <CheckBox
+        android:id="@+id/cb_aatc4_protecting"
         android:text="您没有开启防盗保护"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" />
