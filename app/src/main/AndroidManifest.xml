@@ -11,6 +11,9 @@
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.READ_SMS" />
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
 
     <application
         android:allowBackup="true"
@@ -55,7 +58,28 @@
         <activity android:name=".GPSActivity" >
         </activity>
 
-        <service android:name=".service.GPSService"/>
+        <service android:name=".service.GPSService" />
+
+        <activity android:name=".LockScreenActivity" >
+        </activity>
+
+        <receiver
+            android:name=".MyAdmin"
+            android:label="ConfigureAdminAuthority"
+            android:permission="android.permission.BIND_DEVICE_ADMIN" >
+            <meta-data
+                android:name="android.app.device_admin"
+                android:resource="@xml/device_admin" />
+
+            <intent-filter>
+                <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
+            </intent-filter>
+        </receiver>
+
+        <activity android:name=".AtoolsActivity" >
+        </activity>
+        <activity android:name=".NumberAddressQueryActivity" >
+        </activity>
     </application>
 
 </manifest>

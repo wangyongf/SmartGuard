@@ -3,6 +3,7 @@ package com.yongf.smartguard.service;
 import android.Manifest;
 import android.app.Service;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
@@ -15,6 +16,9 @@ import android.support.annotation.Nullable;
 import android.widget.TextView;
 
 import com.yongf.smartguard.GPSActivity;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Created by yongf-new on 2016/2/6 21:29.
@@ -70,6 +74,22 @@ public class GPSService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+
+        //取消监听位置的服务
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    public void requestPermissions(@NonNull String[] permissions, int requestCode)
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for Activity#requestPermissions for more details.
+                return;
+            }
+        }
+        lm.removeUpdates(myLocationListener);
+        myLocationListener = null;
     }
 
     class MyLocationListener implements LocationListener {
@@ -80,13 +100,29 @@ public class GPSService extends Service {
          */
         @Override
         public void onLocationChanged(Location location) {
-            String longitude = "经度：" + location.getLongitude();     //经度
-            String latitude = "纬度：" + location.getLatitude();        //纬度
-            String accuracy = "精确度：" + location.getAccuracy();      //精确度
-            TextView textView = new TextView(GPSActivity.this);
-            textView.setText(longitude + "\n" + latitude + "\n" + accuracy);
+            String longitude = "longitude:" + location.getLongitude() + "\n";     //经度
+            String latitude = "latitude:" + location.getLatitude() + "\n";        //纬度
+            String accuracy = "accuracy:" + location.getAccuracy() + "\n";      //精确度
 
-            setContentView(textView);
+            //发短信给安全号码
+            //把标准的GPS坐标转换为火星坐标
+            InputStream is = null;
+            try {
+                is = getAssets().open("axisoffset.dat");
+                ModifyOffset offset = ModifyOffset.getInstance(is);
+                PointDouble double1 = offset.s2c(new PointDouble(location.getLongitude(), location.getLatitude()));
+                longitude = "longitude:" + offset.X + "\n";
+                latitude = "latitude:" + offset.Y + "\n";
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            SharedPreferences sp = getSharedPreferences("config", MODE_PRIVATE);
+            SharedPreferences.Editor editor = sp.edit();
+            editor.putString("lastLocation", longitude + latitude + accuracy);
+            editor.commit();
         }
 
         /**
