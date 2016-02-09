@@ -24,4 +24,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"></com.yongf.smartguard.ui.SettingItemView>
 
+    <com.yongf.smartguard.ui.SettingItemView
+        yongf:title="来电显示号码归属地"
+        yongf:desc_on="来电显示号码归属地已经开启"
+        yongf:desc_off="来电显示号码归属地已经关闭"
+        android:id="@+id/siv_show_address"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"></com.yongf.smartguard.ui.SettingItemView>
+
+    <com.yongf.smartguard.ui.SettingClickView
+        android:id="@+id/scv_changebg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"></com.yongf.smartguard.ui.SettingClickView>
+
 </LinearLayout>
