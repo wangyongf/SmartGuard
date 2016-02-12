@@ -5,6 +5,10 @@
     android:orientation="vertical"
     tools:context="com.yongf.smartguard.AtoolsActivity">
 
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="55dip">
+
     <TextView
         android:id="@+id/tv_aa"
         android:background="#8866ff00"
@@ -14,6 +18,16 @@
         android:textSize="22sp"
         android:layout_width="fill_parent"
         android:layout_height="55dip" />
+
+        <Button
+            android:onClick="addBlackNumber"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:text="添加"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </RelativeLayout>
 
     <ListView
         android:id="@+id/lv_call_sms_safe"

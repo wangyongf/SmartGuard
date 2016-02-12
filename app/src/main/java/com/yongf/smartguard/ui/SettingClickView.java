@@ -3,7 +3,6 @@ package com.yongf.smartguard.ui;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
-import android.widget.CheckBox;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -23,17 +22,15 @@ public class SettingClickView extends RelativeLayout {
 
     private String desc_off;
 
-    private String title;
-
     /**
      * 初始化布局文件
      * @param context
      */
     private void initView(Context context) {
-        View.inflate(context, R.layout.setting_click_view, this);
+        View view = View.inflate(context, R.layout.setting_click_view, this);
 
-        tv_title = (TextView) this.findViewById(R.id.tv_auto_update_title);
-        tv_desc = (TextView) this.findViewById(R.id.tv_auto_update_desc);
+        tv_title = (TextView) view.findViewById(R.id.tv_title);
+        tv_desc = (TextView) view.findViewById(R.id.tv_desc);
     }
 
     public SettingClickView(Context context) {
@@ -50,7 +47,7 @@ public class SettingClickView extends RelativeLayout {
         super(context, attrs);
         initView(context);
 
-        title = attrs.getAttributeValue("http://schemas.android.com/apk/res/com.yongf.smartguard", "title");
+        String title = attrs.getAttributeValue("http://schemas.android.com/apk/res/com.yongf.smartguard", "title");
         desc_on = attrs.getAttributeValue("http://schemas.android.com/apk/res/com.yongf.smartguard", "desc_on");
         desc_off = attrs.getAttributeValue("http://schemas.android.com/apk/res/com.yongf.smartguard", "desc_off");
         tv_title.setText(title);
@@ -61,6 +58,18 @@ public class SettingClickView extends RelativeLayout {
     public SettingClickView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         initView(context);
+    }
+
+    /**
+     * 设置组合控件的状态
+     */
+
+    public void setChecked(boolean checked){
+        if(checked){
+            setDesc(desc_on);
+        }else{
+            setDesc(desc_off);
+        }
     }
 
     /**

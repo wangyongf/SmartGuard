@@ -48,6 +48,24 @@ public class BlackListDao  {
     }
 
     /**
+     * 查询黑名单号码的拦截模式
+     * @param number 号码
+     * @return 返回号码的拦截模式，不是黑名单号码返回null
+     */
+    public String findMode(String number) {
+        String result = null;
+        SQLiteDatabase db = helper.getReadableDatabase();
+        Cursor cursor = db.rawQuery("select mode from blackList where number = ?", new String[]{number});
+        if (cursor.moveToNext()) {
+            result = cursor.getString(0);
+        }
+        cursor.close();
+        db.close();
+
+        return result;
+    }
+
+    /**
      * 查询全部黑名单号码
      * @return 返回BlackListInfo类型的List结果集
      */
