@@ -20,7 +20,7 @@ public class testBlackListDB extends AndroidTestCase {
     }
 
     public void testFind() throws Exception {
-        boolean result = dao.find("110");
+        boolean result = dao.findOne("110");
         assertEquals(true, result);
     }
 

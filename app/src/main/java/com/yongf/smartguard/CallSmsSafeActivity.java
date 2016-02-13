@@ -7,12 +7,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,7 +23,7 @@ import com.yongf.smartguard.domain.BlackListInfo;
 
 import java.util.List;
 
-public class CallSmsSafeActivity extends AppCompatActivity {
+public class CallSMSSafeActivity extends AppCompatActivity {
 
     private ListView lv_call_sms_safe;
 
@@ -30,17 +32,94 @@ public class CallSmsSafeActivity extends AppCompatActivity {
     private BlackListDao dao;
 
     private CallSmsSafeAdapter adapter;
+    private ProgressBar pb_loading;
+    private int offset = 0;
+    private int length = 20;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_call_sms_safe);
 
+        pb_loading = (ProgressBar) findViewById(R.id.pb_loading);
         lv_call_sms_safe = (ListView) findViewById(R.id.lv_call_sms_safe);
         dao = new BlackListDao(this);
-        infos = dao.findAll();
-        adapter = new CallSmsSafeAdapter();
-        lv_call_sms_safe.setAdapter(adapter);
+        fillData();
+
+        //给listview注册一个滚动事件的监听器
+        lv_call_sms_safe.setOnScrollListener(new AbsListView.OnScrollListener() {
+
+            /**
+             * 当滚动的状态发生变化的时候
+             * @param view
+             * @param scrollState
+             */
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                switch (scrollState) {
+                    case AbsListView.OnScrollListener.SCROLL_STATE_IDLE:    //空闲状态
+                        System.out.println("空闲状态");
+                        //判断当前listview滚动的位置
+                        //获取最后一个可见条目在集合里面的位置
+                        int lastPosition = lv_call_sms_safe.getLastVisiblePosition();
+                        //集合里面有20个item，位置从0开始的，最后一个是19
+                        if (lastPosition == (infos.size() - 1)) {
+                            System.out.println("lastPosition = " + lastPosition + "加载更多的数据");
+                            offset += length;
+                            fillData();
+                        }
+                        break;
+                    case AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL:    //手指触摸滚动
+                        System.out.println("手指触摸滚动");
+                        break;
+                    case AbsListView.OnScrollListener.SCROLL_STATE_FLING:   //惯性滑行状态
+                        System.out.println("惯性滑行状态");
+                        break;
+                }
+            }
+
+            /**
+             * 滚动的时候调用的方法
+             * @param view
+             * @param firstVisibleItem
+             * @param visibleItemCount
+             * @param totalItemCount
+             */
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+
+            }
+        });
+
+    }
+
+    private void fillData() {
+        pb_loading.setVisibility(View.VISIBLE);
+
+        new Thread(){
+            @Override
+            public void run() {
+                super.run();
+                if (infos == null) {
+                    infos = dao.findSome(offset, length);
+                } else {
+                    //说明原来已经加载过数据了
+                    infos.addAll(dao.findSome(offset, length));
+                }
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        pb_loading.setVisibility(View.INVISIBLE);
+                        if (adapter == null) {
+                            adapter = new CallSmsSafeAdapter();
+                            lv_call_sms_safe.setAdapter(adapter);
+                        } else {
+                            adapter.notifyDataSetChanged();
+                        }
+                    }
+                });
+            }
+        }.start();
     }
 
     private class CallSmsSafeAdapter extends BaseAdapter {
@@ -100,7 +179,7 @@ public class CallSmsSafeActivity extends AppCompatActivity {
             holder.iv_delete_black_number.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(CallSmsSafeActivity.this);
+                    AlertDialog.Builder builder = new AlertDialog.Builder(CallSMSSafeActivity.this);
                     builder.setTitle("警告");
                     builder.setMessage("确定要删除这条记录吗?");
                     builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {

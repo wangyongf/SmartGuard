@@ -34,7 +34,7 @@ public class BlackListDao  {
      * @param number 号码
      * @return 存在返回true;否则返回false
      */
-    public boolean find(String number) {
+    public boolean findOne(String number) {
         boolean result = false;
         SQLiteDatabase db = helper.getReadableDatabase();
         Cursor cursor = db.rawQuery("select * from blacklist where number = ?", new String[]{number});
@@ -73,6 +73,31 @@ public class BlackListDao  {
         List<BlackListInfo> result = new ArrayList<>();
         SQLiteDatabase db = helper.getReadableDatabase();
         Cursor cursor = db.rawQuery("select number,mode from blacklist order by _id desc", null);
+        if (cursor.moveToNext()) {
+            BlackListInfo info = new BlackListInfo();
+            String number = cursor.getString(0);
+            String mode = cursor.getString(1);
+            info.setNumber(number);
+            info.setMode(mode);
+            result.add(info);
+        }
+        cursor.close();
+        db.close();
+
+        return result;
+    }
+
+    /**
+     * 查询部分的黑名单号码
+     * @param offset 从哪个位置开始获取数据
+     * @param length 一次获取的记录数
+     * @return 返回BlackListInfo类型的List结果集
+     */
+    public List<BlackListInfo> findSome(int offset, int length) {
+        List<BlackListInfo> result = new ArrayList<>();
+        SQLiteDatabase db = helper.getReadableDatabase();
+        Cursor cursor = db.rawQuery("select number,mode from blacklist order by _id desc limit ? offset ?",
+                new String[]{String.valueOf(length), String.valueOf(offset)});
         if (cursor.moveToNext()) {
             BlackListInfo info = new BlackListInfo();
             String number = cursor.getString(0);

@@ -1,7 +1,6 @@
 package com.yongf.smartguard;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -110,7 +109,7 @@ public class SplashActivity extends AppCompatActivity {
             }
 
             InputStream is = getAssets().open("address.db");
-            FileOutputStream fos = openFileOutput("address.db", Context.MODE_WORLD_READABLE + Context.MODE_WORLD_WRITEABLE);
+            FileOutputStream fos = new FileOutputStream(file);
             byte[] buffer = new byte[1024];
             int len = 0;
             while((len = is.read(buffer)) != -1) {

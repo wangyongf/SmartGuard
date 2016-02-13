@@ -10,6 +10,7 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.READ_SMS" />
+    <!--<uses-permission android:name="android.permission.WRITE_SMS"/>      -->
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -18,6 +19,8 @@
     <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.CALL_PHONE"/>
+    <uses-permission android:name="android.permission.READ_CALL_LOG"/>
+    <uses-permission android:name="android.permission.WRITE_CALL_LOG"/>
 
     <!-- <instrumentation -->
     <!-- android:name="android.test.InstrumentationTestRunner" -->
@@ -94,7 +97,7 @@
         </activity>
         <activity android:name=".DoubleClickActivity" >
         </activity>
-        <activity android:name=".CallSmsSafeActivity" >
+        <activity android:name=".CallSMSSafeActivity" >
         </activity>
 
         <service
