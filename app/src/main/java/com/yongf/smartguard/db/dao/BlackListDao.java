@@ -37,7 +37,7 @@ public class BlackListDao  {
     public boolean find(String number) {
         boolean result = false;
         SQLiteDatabase db = helper.getReadableDatabase();
-        Cursor cursor = db.rawQuery("select * from blackList where number = ?", new String[]{number});
+        Cursor cursor = db.rawQuery("select * from blacklist where number = ?", new String[]{number});
         if (cursor.moveToNext()) {
             result = true;
         }
@@ -55,7 +55,7 @@ public class BlackListDao  {
     public String findMode(String number) {
         String result = null;
         SQLiteDatabase db = helper.getReadableDatabase();
-        Cursor cursor = db.rawQuery("select mode from blackList where number = ?", new String[]{number});
+        Cursor cursor = db.rawQuery("select mode from blacklist where number = ?", new String[]{number});
         if (cursor.moveToNext()) {
             result = cursor.getString(0);
         }
@@ -72,7 +72,7 @@ public class BlackListDao  {
     public List<BlackListInfo> findAll() {
         List<BlackListInfo> result = new ArrayList<>();
         SQLiteDatabase db = helper.getReadableDatabase();
-        Cursor cursor = db.rawQuery("select * from blackList where number = ?", null);
+        Cursor cursor = db.rawQuery("select number,mode from blacklist order by _id desc", null);
         if (cursor.moveToNext()) {
             BlackListInfo info = new BlackListInfo();
             String number = cursor.getString(0);
@@ -97,7 +97,7 @@ public class BlackListDao  {
         ContentValues values = new ContentValues();
         values.put("number", number);
         values.put("mode", mode);
-        db.insert("blackList", null, values);
+        db.insert("blacklist", null, values);
         db.close();
     }
 
@@ -110,7 +110,7 @@ public class BlackListDao  {
         SQLiteDatabase db = helper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("mode", newMode);
-        db.update("blackList", values, "number = ?", new String[]{number});
+        db.update("blacklist", values, "number = ?", new String[]{number});
         db.close();
     }
 
@@ -120,7 +120,7 @@ public class BlackListDao  {
      */
     public void delete(String number) {
         SQLiteDatabase db = helper.getWritableDatabase();
-        db.delete("blackList", "number = ?", new String[]{number});
+        db.delete("blackl8ist", "number = ?", new String[]{number});
         db.close();
     }
 }

@@ -111,6 +111,7 @@ public class SettingActivity extends AppCompatActivity {
         siv_call_sms_safe = (SettingItemView) findViewById(R.id.siv_call_sms_safe);
         callSMSSafeIntent = new Intent(this, CallSMSSafeService.class);
 
+        //我觉得这里的处理有问题！
         boolean isCallSMSSafeServiceRunning = ServiceUtils.isServiceRunning(SettingActivity.this, "com.yongf.smartguard.service.CallSMSSafeService");
         siv_call_sms_safe.setChecked(isCallSMSSafeServiceRunning);
 

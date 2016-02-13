@@ -92,7 +92,6 @@ public class CallSMSSafeService extends Service {
     private class MyListener extends PhoneStateListener {
         @Override
         public void onCallStateChanged(int state, String incomingNumber) {
-            super.onCallStateChanged(state, incomingNumber);
 
             switch (state) {
                 case TelephonyManager.CALL_STATE_RINGING:       //铃响状态
@@ -100,10 +99,13 @@ public class CallSMSSafeService extends Service {
                     if ("1" . equals(result) || "3" . equals(result)) {
                         Log.i(TAG, "挂断电话。。。");
                         endCall();
+                        //删除通话记录
+
                     }
 
                     break;
             }
+            super.onCallStateChanged(state, incomingNumber);
         }
     }
 
