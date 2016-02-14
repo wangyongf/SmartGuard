@@ -13,9 +13,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.widget.TextView;
-
-import com.yongf.smartguard.GPSActivity;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -108,7 +105,7 @@ public class GPSService extends Service {
             //把标准的GPS坐标转换为火星坐标
             InputStream is = null;
             try {
-                is = getAssets().open("axisoffset.dat");
+                is = getResources().getAssets().open("axisoffset.dat");
                 ModifyOffset offset = ModifyOffset.getInstance(is);
                 PointDouble double1 = offset.s2c(new PointDouble(location.getLongitude(), location.getLatitude()));
                 longitude = "longitude:" + offset.X + "\n";

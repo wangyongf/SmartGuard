@@ -1,6 +1,7 @@
 package com.yongf.smartguard;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -72,7 +73,7 @@ public class SplashActivity extends AppCompatActivity {
         tv_update_progress = (TextView) findViewById(R.id.tv_update_progress);
 
         //拷贝数据库
-        copyDB();
+        copyDB(this);
 
         boolean update = sp.getBoolean("update", false);
         if (update) {
@@ -99,24 +100,24 @@ public class SplashActivity extends AppCompatActivity {
      * //path 把address.db这个数据库拷贝到data/data/packageName/files/address.db
      * 这里拷贝失败，为什么？
      */
-    private void copyDB() {
+    private void copyDB(Context context) {
         //只要拷贝过一次就可
         try {
             File file = new File(getFilesDir(), "address.db");
             if (file.exists() && file.length() > 0) {
                 System.out.println("已经拷贝过了");
-                return;
+            } else {
+                InputStream is = context.getResources().getAssets().open("address.db");
+                FileOutputStream fos = new FileOutputStream(file);
+                byte[] buffer = new byte[1024];
+                int len = 0;
+                while((len = is.read(buffer)) != -1) {
+                    fos.write(buffer, 0, len);
+                }
+                is.close();
+                fos.close();
             }
 
-            InputStream is = getAssets().open("address.db");
-            FileOutputStream fos = new FileOutputStream(file);
-            byte[] buffer = new byte[1024];
-            int len = 0;
-            while((len = is.read(buffer)) != -1) {
-                fos.write(buffer, 0, len);
-            }
-            is.close();
-            fos.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
