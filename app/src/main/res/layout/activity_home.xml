@@ -20,7 +20,7 @@
         android:singleLine="true"
         android:ellipsize="marquee"
         android:textSize="18sp"
-        android:text="乐天手机卫士全新来袭，速来尝鲜"
+        android:text="乐天手机卫士全新来袭，速来尝鲜。用哥博客：blog.54yongf.com | blog.csdn.net/yongf2014"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" />
 
