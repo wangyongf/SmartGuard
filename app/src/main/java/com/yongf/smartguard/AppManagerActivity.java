@@ -1,17 +1,25 @@
 package com.yongf.smartguard;
 
 import android.annotation.TargetApi;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.StatFs;
 import android.support.v7.app.AppCompatActivity;
 import android.text.format.Formatter;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.ScaleAnimation;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
@@ -21,6 +29,7 @@ import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.yongf.smartguard.domain.AppInfo;
 import com.yongf.smartguard.engine.AppInfoProvider;
@@ -28,8 +37,9 @@ import com.yongf.smartguard.engine.AppInfoProvider;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AppManagerActivity extends AppCompatActivity {
+public class AppManagerActivity extends AppCompatActivity implements View.OnClickListener {
 
+    private static final String TAG = "AppManagerActivity";
     private TextView tv_avail_ram;
     private TextView tv_avail_sd;
     private ListView lv_app_manager;
@@ -60,6 +70,28 @@ public class AppManagerActivity extends AppCompatActivity {
      */
     private PopupWindow popupWindow;
 
+    /**
+     * 开启
+     */
+    private LinearLayout ll_start;
+
+    /**
+     * 分享
+     */
+    private LinearLayout ll_share;
+
+    /**
+     * 卸载
+     */
+    private LinearLayout ll_unistall;
+
+    /**
+     * 被点击的条目
+     */
+    private AppInfo appInfo;
+
+    private AppManagerApapter adapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,32 +109,7 @@ public class AppManagerActivity extends AppCompatActivity {
         tv_avail_sd.setText("SD卡可用：" + android.text.format.Formatter.formatFileSize(this, sdSize));
         tv_avail_ram.setText("内存可用：" + Formatter.formatFileSize(this, ramSize));
 
-         ll_loading.setVisibility(View.VISIBLE);
-        new Thread(){
-            @Override
-            public void run() {
-                //这个操作可能非常耗时！
-                appInfos = AppInfoProvider.getAppInfos(AppManagerActivity.this);
-                userAppInfos = new ArrayList<AppInfo>();
-                systemAppInfos = new ArrayList<AppInfo>();
-                for (AppInfo info : appInfos) {
-                    if (info.isUserApp()) {
-                        userAppInfos.add(info);
-                    } else {
-                        systemAppInfos.add(info);
-                    }
-                }
-
-                //加载listview的数据适配器
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        ll_loading.setVisibility(View.INVISIBLE);
-                        lv_app_manager.setAdapter(new AppManagerApapter());
-                    }
-                });
-            }
-        }.start();
+        fillData();
 
         //给listview注册一个滚动监听器
         lv_app_manager.setOnScrollListener(new AbsListView.OnScrollListener() {
@@ -136,7 +143,7 @@ public class AppManagerActivity extends AppCompatActivity {
         lv_app_manager.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                AppInfo appInfo;
+//                AppInfo appInfo;
                 int newPosition;
 
                 if (position == 0 ||
@@ -154,18 +161,68 @@ public class AppManagerActivity extends AppCompatActivity {
                 }
 //                System.out.println(appInfo.getPackageName());
                 dismissPopupWindow();
+                View contentView = View.inflate(getApplicationContext(), R.layout.popup_app_item, null);
+                ll_start = (LinearLayout) contentView.findViewById(R.id.ll_start);
+                ll_share = (LinearLayout) contentView.findViewById(R.id.ll_share);
+                ll_unistall = (LinearLayout) contentView.findViewById(R.id.ll_unistall);
 
+                ll_start.setOnClickListener(AppManagerActivity.this);
+                ll_share.setOnClickListener(AppManagerActivity.this);
+                ll_unistall.setOnClickListener(AppManagerActivity.this);
 
-                TextView contentView = new TextView(getApplicationContext());
-                contentView.setText(appInfo.getPackageName());
-                contentView.setTextColor(Color.BLACK);
                 popupWindow = new PopupWindow(contentView, 200, 100);
-                popupWindow.setBackgroundDrawable(new ColorDrawable(Color.RED));
+                //动画效果的播放要求窗体必须有背景颜色
+                //透明颜色也是颜色
+                popupWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+//                popupWindow.setBackgroundDrawable(new ColorDrawable(Color.RED));
                 int[] location = new int[2];
                 view.getLocationInWindow(location);
                 popupWindow.showAtLocation(parent, Gravity.LEFT | Gravity.TOP, location[0], location[1]);
+                ScaleAnimation sa = new ScaleAnimation(0.3f, 1.0f, 0.3f, 1.0f, Animation.RELATIVE_TO_SELF, 0,
+                        Animation.RELATIVE_TO_SELF, 0.5f);
+                sa.setDuration(200);
+                AlphaAnimation aa = new AlphaAnimation(0.5f, 1.0f);
+                aa.setDuration(200);
+                AnimationSet set = new AnimationSet(false);
+                set.addAnimation(aa);
+                set.addAnimation(sa);
+                contentView.startAnimation(set);
             }
         });
+    }
+
+    private void fillData() {
+        ll_loading.setVisibility(View.VISIBLE);
+        new Thread(){
+            @Override
+            public void run() {
+                //这个操作可能非常耗时！
+                appInfos = AppInfoProvider.getAppInfos(AppManagerActivity.this);
+                userAppInfos = new ArrayList<AppInfo>();
+                systemAppInfos = new ArrayList<AppInfo>();
+                for (AppInfo info : appInfos) {
+                    if (info.isUserApp()) {
+                        userAppInfos.add(info);
+                    } else {
+                        systemAppInfos.add(info);
+                    }
+                }
+
+                //加载listview的数据适配器
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (adapter == null) {
+                            adapter = new AppManagerApapter();
+                            lv_app_manager.setAdapter(adapter);
+                        } else {
+                            adapter.notifyDataSetChanged();
+                        }
+                        ll_loading.setVisibility(View.INVISIBLE);
+                    }
+                });
+            }
+        }.start();
     }
 
     private void dismissPopupWindow() {
@@ -174,6 +231,86 @@ public class AppManagerActivity extends AppCompatActivity {
             popupWindow.dismiss();
             popupWindow = null;
         }
+    }
+
+    /**
+     * 布局对应的点击事件
+     * @param v 布局
+     */
+    @Override
+    public void onClick(View v) {
+        dismissPopupWindow();
+        switch (v.getId()) {
+            case R.id.ll_share:
+                Log.i(TAG, "分享" + appInfo.getAppName());
+                shareApplication();
+
+                break;
+            case R.id.ll_start:
+                Log.i(TAG, "开启" + appInfo.getAppName());
+                startApplication();
+
+                break;
+            case R.id.ll_unistall:
+                if (appInfo.isUserApp()) {
+                    Log.i(TAG, "卸载" + appInfo.getAppName());
+                    uninstallApplication();
+                    return;
+                }
+                Toast.makeText(AppManagerActivity.this, "系统应用！Root之后才能卸载", Toast.LENGTH_SHORT).show();
+//                Runtime.getRuntime().exec("sudo | chmod");
+                break;
+        }
+    }
+
+    /**
+     * 分享应用程序
+     */
+    private void shareApplication() {
+        Intent intent = new Intent();
+        intent.setAction("android.intent.action.SEND");
+        intent.addCategory(Intent.CATEGORY_DEFAULT);
+        intent.setType("text/plain");
+        intent.putExtra(Intent.EXTRA_TEXT, "推荐您使用一款软件，名称叫：" + appInfo.getAppName());
+
+        startActivity(intent);
+    }
+
+    private void uninstallApplication() {
+        Intent intent = new Intent();
+        intent.setAction("android.intent.action.VIEW");
+        intent.setAction("android.intent.action.DELETE");
+        intent.addCategory("android.intent.category.DEFAULT");
+        intent.setData(Uri.parse("package:" + appInfo.getPackageName()));
+
+        startActivityForResult(intent, 0);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        //刷新界面
+        fillData();
+
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    /**
+     * 开启应用程序
+     */
+    private void startApplication() {
+        //查询应用程序的入口activity，把它开启
+        PackageManager pm = getPackageManager();
+//        Intent intent = new Intent();
+//        intent.setAction("android.intent.action.MAIN");
+//        intent.addCategory("android.intent.category.LAUNCHER");
+//        //查询出来了手机上的所有具有启动能力的activity
+//        List<ResolveInfo> infos = pm.queryIntentActivities(intent, PackageManager.GET_INTENT_FILTERS);
+        Intent intent = pm.getLaunchIntentForPackage(appInfo.getPackageName());
+        if (intent != null) {
+            startActivity(intent);
+            return;
+        }
+        Toast.makeText(AppManagerActivity.this, "不能启动当前应用", Toast.LENGTH_SHORT).show();
     }
 
     private class AppManagerApapter extends BaseAdapter {

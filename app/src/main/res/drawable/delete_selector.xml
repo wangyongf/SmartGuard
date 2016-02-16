@@ -6,5 +6,5 @@
           android:drawable="@drawable/ic_delete_btn_focused" /> <!-- focused -->
     <item android:state_hovered="true"
           android:drawable="@drawable/ic_delete_btn_focused" /> <!-- hovered -->
-    <item android:drawable="@drawable/ic_delete_btn" /> <!-- default -->
+    <item android:drawable="@drawable/ic_delete_btn" /> <!-- ic_default -->
 </selector>

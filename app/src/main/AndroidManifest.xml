@@ -21,6 +21,8 @@
     <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.READ_CALL_LOG" />
     <uses-permission android:name="android.permission.WRITE_CALL_LOG" />
+    <!-- <uses-permission android:name="android.permission.INSTALL_PACKAGES"/> -->
+    <uses-permission android:name="android.permission.INSTALL_SHORTCUT" />
 
     <!-- <instrumentation -->
     <!-- android:name="android.test.InstrumentationTestRunner" -->
@@ -34,6 +36,8 @@
 
         <!-- <uses-library android:name="android.test.AndroidTestRunner"/> -->
         <activity android:name=".SplashActivity" >
+
+            <!-- 入口activity的配置信息 -->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -107,6 +111,8 @@
         </service>
 
         <activity android:name=".AppManagerActivity" >
+        </activity>
+        <activity android:name=".TaskManagerActivity" >
         </activity>
     </application>
 

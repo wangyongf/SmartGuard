@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -72,6 +73,8 @@ public class SplashActivity extends AppCompatActivity {
 
         tv_update_progress = (TextView) findViewById(R.id.tv_update_progress);
 
+        initializeShortCut();
+
         //拷贝数据库
         copyDB(this);
 
@@ -94,6 +97,34 @@ public class SplashActivity extends AppCompatActivity {
         AlphaAnimation alphaAnimation = new AlphaAnimation(0.2f, 1.0f);
         alphaAnimation.setDuration(1000);
         findViewById(R.id.rl_root_splash).startAnimation(alphaAnimation);
+    }
+
+    /**
+     * 创建快捷方式
+     */
+    private void initializeShortCut() {
+        //只在用户桌面上创建一次快捷图标
+        boolean shortcut = sp.getBoolean("shortcut", false);
+        if (shortcut) {
+            return;
+        }
+        SharedPreferences.Editor editor = sp.edit();
+        //发送广播的意图，大吼一声告诉桌面，要创建快捷图标了！
+        Intent intent = new Intent();
+        intent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
+        //快捷方式 要包含3个重要的信息：1. 名称 2. 图标 3. 要干什么事情
+        intent.putExtra(Intent.EXTRA_SHORTCUT_NAME, "手机小卫士");
+        intent.putExtra(Intent.EXTRA_SHORTCUT_ICON, BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher));
+        //桌面点击图标对应的意图
+        Intent shortcutIntent = new Intent();
+        shortcutIntent.setAction("android.intent.action.MAIN");
+        shortcutIntent.addCategory("android.intent.category.LAUNCHER");
+        shortcutIntent.setClassName(getPackageName(), "com.yongf.smartguard.SplashActivity");
+        intent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
+        sendBroadcast(intent);
+
+        editor.putBoolean("shortcut", true);
+        editor.commit();
     }
 
     /**
