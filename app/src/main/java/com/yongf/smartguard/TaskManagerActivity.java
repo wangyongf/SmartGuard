@@ -1,5 +1,8 @@
 package com.yongf.smartguard;
 
+import android.app.ActivityManager;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -15,6 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.yongf.smartguard.domain.TaskInfo;
 import com.yongf.smartguard.engine.TaskInfoProvider;
@@ -37,24 +41,24 @@ public class TaskManagerActivity extends AppCompatActivity {
     private TaskInfo taskInfo;
 
     private TaskManagerAdapter adapter;
+    private int runningProcessCount;
+    private long availMem;
+    private long totalMem;
+
+    private SharedPreferences sp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task_manager);
 
+        sp = getSharedPreferences("config", MODE_PRIVATE);
+
         tv_mem_info = (TextView) findViewById(R.id.tv_mem_info);
         tv_active_process_count = (TextView) findViewById(R.id.tv_active_process_count);
         ll_loading = (LinearLayout) findViewById(R.id.ll_loading);
         lv_task_manager = (ListView) findViewById(R.id.lv_task_manager);
         tv_status = (TextView) findViewById(R.id.tv_status);
-
-        int runningProcessCount = SystemInfoUtils.getRunningProcessCount(this);
-        tv_active_process_count.setText("运行中的进程(" + runningProcessCount + ")");
-        long availMem = SystemInfoUtils.getAvailMem(this);
-        long totalMem = SystemInfoUtils.getTotalMemVersion2(this);
-        tv_mem_info.setText("剩余/总内存(" + Formatter.formatFileSize(this, availMem) + "/" +
-                Formatter.formatFileSize(this, totalMem) + ")");
 
         fillData();
 
@@ -69,7 +73,7 @@ public class TaskManagerActivity extends AppCompatActivity {
                 if (userTaskInfos == null || systemTaskInfos == null) {
                     return;
                 }
-                if (firstVisibleItem >= userTaskInfos.size()) {
+                if (firstVisibleItem > userTaskInfos.size()) {
                     tv_status.setText("系统进程(" + systemTaskInfos.size() + ")");
                 } else {
                     tv_status.setText("用户进程(" + userTaskInfos.size() + ")");
@@ -89,7 +93,12 @@ public class TaskManagerActivity extends AppCompatActivity {
                 } else {
                     taskInfo = systemTaskInfos.get(position - 1 - userTaskInfos.size() - 1);
                 }
+                if (getPackageName().equals(taskInfo.getPackName())) {
+                    return;
+                }
+
                 ViewHolder holder = (ViewHolder) view.getTag();
+
                 if (taskInfo.isChecked()) {
                     taskInfo.setIsChecked(false);
                     holder.cb_status.setChecked(false);
@@ -102,12 +111,22 @@ public class TaskManagerActivity extends AppCompatActivity {
         });
     }
 
+    private void setTitle() {
+        runningProcessCount = SystemInfoUtils.getRunningProcessCount(this);
+        availMem = SystemInfoUtils.getAvailMem(this);
+        totalMem = SystemInfoUtils.getTotalMemVersion2(this);
+
+        tv_active_process_count.setText("运行中的进程(" + runningProcessCount + ")");
+        tv_mem_info.setText("剩余/总内存(" + Formatter.formatFileSize(this, availMem) + "/" +
+                Formatter.formatFileSize(this, totalMem) + ")");
+    }
+
     /**
      * 填充数据
      */
     private void fillData() {
         ll_loading.setVisibility(View.VISIBLE);
-        new Thread(){
+        new Thread() {
             @Override
             public void run() {
                 taskInfos = TaskInfoProvider.getTaskInfos(getApplicationContext());
@@ -132,6 +151,8 @@ public class TaskManagerActivity extends AppCompatActivity {
                         } else {
                             adapter.notifyDataSetChanged();
                         }
+
+                        setTitle();
                     }
                 });
             }
@@ -142,7 +163,11 @@ public class TaskManagerActivity extends AppCompatActivity {
 
         @Override
         public int getCount() {
-            return userTaskInfos.size() + 1 +systemTaskInfos.size() + 1;
+            if (sp.getBoolean("showSystem", false)) {
+                return userTaskInfos.size() + 1 + systemTaskInfos.size() + 1;
+            } else {
+                return userTaskInfos.size() + 1;      //这样，就只会显示用户进程
+            }
         }
 
         @Override
@@ -199,6 +224,12 @@ public class TaskManagerActivity extends AppCompatActivity {
             holder.tv_memsize.setText("内存占用(" + Formatter.formatFileSize(getApplicationContext(), taskInfo.getMemSize()) + ")");
             holder.cb_status.setChecked(taskInfo.isChecked());
 
+            if (getPackageName().equals(taskInfo.getPackName())) {
+                holder.cb_status.setVisibility(View.INVISIBLE);
+            } else {
+                holder.cb_status.setVisibility(View.VISIBLE);
+            }
+
             return view;
         }
     }
@@ -208,5 +239,99 @@ public class TaskManagerActivity extends AppCompatActivity {
         TextView tv_name;
         TextView tv_memsize;
         CheckBox cb_status;
+    }
+
+    /**
+     * 全选
+     *
+     * @param view
+     */
+    public void selectAll(View view) {
+        for (TaskInfo info : taskInfos) {
+            if (getPackageName().equals(info.getPackName())) {
+                continue;
+            }
+
+            info.setIsChecked(true);
+        }
+
+        adapter.notifyDataSetChanged();
+    }
+
+    /**
+     * 反选
+     *
+     * @param view
+     */
+    public void selectOpposite(View view) {
+        for (TaskInfo info : taskInfos) {
+            if (getPackageName().equals(info.getPackName())) {
+                continue;
+            }
+
+            info.setIsChecked(!info.isChecked());
+        }
+
+        adapter.notifyDataSetChanged();
+    }
+
+    /**
+     * 一键清理
+     *
+     * @param view
+     */
+    public void killAll(View view) {
+        ActivityManager am = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
+        int count = 0;
+        long savedMem = 0;
+        List<TaskInfo> killedTaskInfos = new ArrayList<>();
+
+        for (TaskInfo info : taskInfos) {
+            //被勾选的，杀死这个进程
+            if (info.isChecked()) {
+                am.killBackgroundProcesses(info.getPackName());
+
+                if (info.isUserTask()) {
+                    userTaskInfos.remove(info);
+                } else {
+                    systemTaskInfos.remove(info);
+                }
+
+                count++;
+                savedMem += info.getMemSize();
+                killedTaskInfos.add(info);
+            }
+        }
+
+        taskInfos.removeAll(killedTaskInfos);
+
+        adapter.notifyDataSetChanged();
+        Toast.makeText(TaskManagerActivity.this, "杀死了" + count + "个进程，释放了" +
+                Formatter.formatFileSize(this, savedMem) + "的内存", Toast.LENGTH_SHORT).show();
+
+        runningProcessCount -= count;
+        availMem += savedMem;
+
+        tv_active_process_count.setText("运行中的进程(" + runningProcessCount + ")");
+        tv_mem_info.setText("剩余/总内存(" + Formatter.formatFileSize(this, availMem) + "/" +
+                Formatter.formatFileSize(this, totalMem) + ")");
+
+//        fillData();
+    }
+
+    /**
+     * 进入设置
+     *
+     * @param view
+     */
+    public void enterSetting(View view) {
+        Intent intent = new Intent(this, TaskManagerSettingActivity.class);
+        startActivityForResult(intent, 0);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        adapter.notifyDataSetChanged();
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }

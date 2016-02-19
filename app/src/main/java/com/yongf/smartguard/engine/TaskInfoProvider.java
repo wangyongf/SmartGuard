@@ -66,6 +66,7 @@ public class TaskInfoProvider {
                 e.printStackTrace();
                 taskInfo.setIcon(context.getResources().getDrawable(R.drawable.ic_default));
                 taskInfo.setAppName(packName);
+                taskInfo.setIsUserTask(false);
             }
 
             taskInfos.add(taskInfo);

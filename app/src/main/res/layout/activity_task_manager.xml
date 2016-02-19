@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="com.yongf.smartguard.AtoolsActivity">
 
     <TextView
         android:id="@+id/tv_aa"
+        android:layout_width="fill_parent"
+        android:layout_height="55dip"
         android:background="#8866ff00"
         android:gravity="center"
         android:text="进程管理"
         android:textColor="#000000"
-        android:textSize="22sp"
-        android:layout_width="fill_parent"
-        android:layout_height="55dip" />
+        android:textSize="22sp" />
 
     <RelativeLayout
         android:layout_width="fill_parent"
@@ -21,60 +22,96 @@
 
         <TextView
             android:id="@+id/tv_active_process_count"
-            android:layout_alignParentLeft="true"
-            android:textColor="#000000"
-            android:text="运行中的进程"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:text="运行中的进程"
+            android:textColor="#000000" />
 
         <TextView
             android:id="@+id/tv_mem_info"
-            android:layout_alignParentRight="true"
-            android:textColor="#000000"
-            android:text="剩余/总内存"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="剩余/总内存"
+            android:textColor="#000000" />
 
     </RelativeLayout>
 
     <FrameLayout
+        android:layout_weight="10000"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent">
 
         <LinearLayout
             android:id="@+id/ll_loading"
-            android:visibility="invisible"
-            android:orientation="vertical"
-            android:gravity="center"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent">
+            android:layout_height="fill_parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="invisible">
 
             <ProgressBar
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
             <TextView
-                android:text="正在加载进程信息"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:text="正在加载进程信息" />
 
         </LinearLayout>
 
         <ListView
-            android:overScrollMode="never"
-            android:fastScrollEnabled="true"
             android:id="@+id/lv_task_manager"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent"></ListView>
+            android:layout_height="fill_parent"
+            android:fastScrollEnabled="true"
+            android:overScrollMode="never"></ListView>
 
         <TextView
             android:id="@+id/tv_status"
-            android:text="用户进程(6)"
-            android:textColor="#ffffff"
-            android:background="#ff888888"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:background="#ff888888"
+            android:text="用户进程(6)"
+            android:textColor="#ffffff" />
 
     </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:onClick="selectAll"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="全选" />
+
+        <Button
+            android:onClick="selectOpposite"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="反选" />
+
+        <Button
+            android:onClick="killAll"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="清理" />
+
+        <Button
+            android:onClick="enterSetting"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="设置" />
+
+    </LinearLayout>
 
 </LinearLayout>
