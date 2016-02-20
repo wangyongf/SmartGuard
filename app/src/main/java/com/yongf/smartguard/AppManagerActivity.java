@@ -31,6 +31,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.yongf.smartguard.db.dao.AppLockDao;
 import com.yongf.smartguard.domain.AppInfo;
 import com.yongf.smartguard.engine.AppInfoProvider;
 
@@ -92,10 +93,14 @@ public class AppManagerActivity extends AppCompatActivity implements View.OnClic
 
     private AppManagerApapter adapter;
 
+    private AppLockDao dao;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_app_manager);
+
+        dao = new AppLockDao(this);
 
         tv_avail_ram = (TextView) findViewById(R.id.tv_avail_ram);
         tv_avail_sd = (TextView) findViewById(R.id.tv_avail_sd);
@@ -187,6 +192,43 @@ public class AppManagerActivity extends AppCompatActivity implements View.OnClic
                 set.addAnimation(aa);
                 set.addAnimation(sa);
                 contentView.startAnimation(set);
+            }
+        });
+
+        //程序锁 设置条目长点击的事件监听器
+        lv_app_manager.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                int newPosition;
+
+                if (position == 0 ||
+                        position == (userAppInfos.size() + 1)) {
+                    return false;
+                }
+                if (position <= userAppInfos.size()) {
+                    //用户程序
+                    newPosition = position - 1;
+                    appInfo = userAppInfos.get(newPosition);
+                } else {
+                    //系统程序
+                    newPosition = position - 1 - userAppInfos.size() - 1;
+                    appInfo = systemAppInfos.get(newPosition);
+                }
+
+                ViewHolder holder = (ViewHolder) view.getTag();
+
+                //判断条目是否在程序锁数据库中
+                if (dao.find(appInfo.getPackageName())) {
+                    //是被锁定的程序，解除锁定，更新界面为打开的小锁图标
+                    dao.delete(appInfo.getPackageName());
+                    holder.iv_status.setImageResource(R.drawable.unlock);
+                } else {
+                    //锁定，更新界面
+                    dao.add(appInfo.getPackageName());
+                    holder.iv_status.setImageResource(R.drawable.lock);
+                }
+
+                return false;
             }
         });
     }
@@ -377,6 +419,7 @@ public class AppManagerActivity extends AppCompatActivity implements View.OnClic
                 holder.iv_app_icon = (ImageView) view.findViewById(R.id.iv_app_icon);
                 holder.tv_app_name = (TextView) view.findViewById(R.id.tv_app_name);
                 holder.tv_app_location = (TextView) view.findViewById(R.id.tv_app_location);
+                holder.iv_status = (ImageView) view.findViewById(R.id.iv_status);
                 view.setTag(holder);
             }
             holder.iv_app_icon.setImageDrawable(appInfo.getIcon());
@@ -388,6 +431,18 @@ public class AppManagerActivity extends AppCompatActivity implements View.OnClic
                 holder.tv_app_location.setText("外部存储");
             }
 
+            if (dao.find(appInfo.getPackageName())) {
+                holder.iv_status.setImageResource(R.drawable.lock);
+            } else {
+                holder.iv_status.setImageResource(R.drawable.unlock);
+            }
+//            holder.iv_status.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//
+//                }
+//            });
+
             return view;
         }
     }
@@ -396,6 +451,7 @@ public class AppManagerActivity extends AppCompatActivity implements View.OnClic
         TextView tv_app_name;
         TextView tv_app_location;
         ImageView iv_app_icon;
+        ImageView iv_status;
     }
 
     /**
