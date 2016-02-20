@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.yongf.smartguard"
     android:versionCode="1"
-    android:versionName="0.1" >
+    android:versionName="0.1">
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -33,10 +33,10 @@
         android:icon="@mipmap/letian"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AppCompat.Light.NoActionBar" >
+        android:theme="@style/Theme.AppCompat.Light.NoActionBar">
 
         <!-- <uses-library android:name="android.test.AndroidTestRunner"/> -->
-        <activity android:name=".SplashActivity" >
+        <activity android:name=".SplashActivity">
 
             <!-- 入口activity的配置信息 -->
             <intent-filter>
@@ -46,35 +46,28 @@
             </intent-filter>
         </activity>
         <activity android:name=".HomeActivity" />
-        <activity android:name=".SettingActivity" >
-        </activity>
-        <activity android:name=".LostFindActivity" >
-        </activity>
-        <activity android:name=".AntiTheftConfigureActivity1" >
-        </activity>
-        <activity android:name=".AntiTheftConfigureActivity2" >
-        </activity>
-        <activity android:name=".AntiTheftConfigureActivity3" >
-        </activity>
-        <activity android:name=".AntiTheftConfigureActivity4" >
-        </activity>
-        <activity android:name=".SelectContactActivity" >
-        </activity>
+        <activity android:name=".SettingActivity" />
+        <activity android:name=".LostFindActivity" />
+        <activity android:name=".AntiTheftConfigureActivity1" />
+        <activity android:name=".AntiTheftConfigureActivity2" />
+        <activity android:name=".AntiTheftConfigureActivity3" />
+        <activity android:name=".AntiTheftConfigureActivity4" />
+        <activity android:name=".SelectContactActivity" />
 
-        <receiver android:name=".receiver.BootCompleteReceiver" >
+        <receiver android:name=".receiver.BootCompleteReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".receiver.SMSReceiver" >
-            <intent-filter android:priority="1000" >
+        <receiver android:name=".receiver.SMSReceiver">
+            <intent-filter android:priority="1000">
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
             </intent-filter>
         </receiver>
         <receiver
             android:name=".MyAdmin"
             android:label="ConfigureAdminAuthority"
-            android:permission="android.permission.BIND_DEVICE_ADMIN" >
+            android:permission="android.permission.BIND_DEVICE_ADMIN">
             <meta-data
                 android:name="android.app.device_admin"
                 android:resource="@xml/device_admin" />
@@ -83,7 +76,7 @@
                 <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".receiver.OutCallReceiver" >
+        <receiver android:name=".receiver.OutCallReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.NEW_OUTGOING_CALL" />
             </intent-filter>
@@ -92,37 +85,51 @@
         <service android:name=".service.GPSService" />
         <service android:name=".service.AddressService" />
 
-        <activity android:name=".GPSActivity" >
-        </activity>
-        <activity android:name=".LockScreenActivity" >
-        </activity>
-        <activity android:name=".AtoolsActivity" >
-        </activity>
-        <activity android:name=".NumberAddressQueryActivity" >
-        </activity>
-        <activity android:name=".DoubleClickActivity" >
-        </activity>
-        <activity android:name=".CallSMSSafeActivity" >
-        </activity>
+        <activity android:name=".GPSActivity" />
+        <activity android:name=".LockScreenActivity" />
+        <activity android:name=".AtoolsActivity" />
+        <activity android:name=".NumberAddressQueryActivity" />
+        <activity android:name=".DoubleClickActivity" />
+        <activity android:name=".CallSMSSafeActivity" />
 
         <service
             android:name=".service.CallSMSSafeService"
             android:enabled="true"
-            android:exported="true" >
-        </service>
+            android:exported="true" />
 
-        <activity android:name=".AppManagerActivity" >
-        </activity>
-        <activity android:name=".TaskManagerActivity" >
-        </activity>
-        <activity android:name=".TaskManagerSettingActivity" >
-        </activity>
+        <activity android:name=".AppManagerActivity" />
+        <activity android:name=".TaskManagerActivity" />
+        <activity android:name=".TaskManagerSettingActivity" />
 
         <service
             android:name=".service.AutoCleanService"
             android:enabled="true"
-            android:exported="true" >
-        </service>
+            android:exported="true" />
+
+        <receiver android:name=".receiver.MyWidget">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/my_widget_info" />
+        </receiver>
+
+        <service
+            android:name=".service.UpdateWidgetService"
+            android:enabled="true"
+            android:exported="true" />
+
+        <receiver
+            android:name=".receiver.ClearReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.yongf.smartguard.clear"/>
+            </intent-filter>
+        </receiver>
+
     </application>
 
 </manifest>
