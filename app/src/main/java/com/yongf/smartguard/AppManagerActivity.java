@@ -228,7 +228,7 @@ public class AppManagerActivity extends AppCompatActivity implements View.OnClic
                     holder.iv_status.setImageResource(R.drawable.lock);
                 }
 
-                return false;
+                return true;
             }
         });
     }
@@ -355,10 +355,39 @@ public class AppManagerActivity extends AppCompatActivity implements View.OnClic
         Toast.makeText(AppManagerActivity.this, "不能启动当前应用", Toast.LENGTH_SHORT).show();
     }
 
+    /**
+     * 获取某个目录的可用空间
+     *
+     * @param path
+     * @return
+     */
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
+    private long getAvailSpace(String path) {
+        StatFs statFs = new StatFs(path);
+        long size = statFs.getBlockSize();      //获取分区的大小
+        long count = statFs.getAvailableBlocks();        //获取可用的区块的个数
+
+        return size * count;
+    }
+
+    @Override
+    protected void onDestroy() {
+        dismissPopupWindow();
+        super.onDestroy();
+    }
+
+    static class ViewHolder {
+        TextView tv_app_name;
+        TextView tv_app_location;
+        ImageView iv_app_icon;
+        ImageView iv_status;
+    }
+
     private class AppManagerApapter extends BaseAdapter {
 
         /**
          * 控制listview有多少个条目
+         *
          * @return
          */
         @Override
@@ -445,32 +474,5 @@ public class AppManagerActivity extends AppCompatActivity implements View.OnClic
 
             return view;
         }
-    }
-
-    static class ViewHolder {
-        TextView tv_app_name;
-        TextView tv_app_location;
-        ImageView iv_app_icon;
-        ImageView iv_status;
-    }
-
-    /**
-     * 获取某个目录的可用空间
-     * @param path
-     * @return
-     */
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
-    private long getAvailSpace(String path) {
-        StatFs statFs = new StatFs(path);
-        long size = statFs.getBlockSize();      //获取分区的大小
-        long count = statFs.getAvailableBlocks();        //获取可用的区块的个数
-
-        return size * count;
-    }
-
-    @Override
-    protected void onDestroy() {
-        dismissPopupWindow();
-        super.onDestroy();
     }
 }

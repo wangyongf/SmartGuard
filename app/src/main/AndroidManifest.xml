@@ -24,6 +24,7 @@
     <!-- <uses-permission android:name="android.permission.INSTALL_PACKAGES"/> -->
     <uses-permission android:name="android.permission.INSTALL_SHORTCUT" />
     <uses-permission android:name="android.permission.KILL_BACKGROUND_PROCESSES" />
+    <uses-permission android:name="android.permission.GET_TASKS" />
 
     <!-- <instrumentation -->
     <!-- android:name="android.test.InstrumentationTestRunner" -->
@@ -126,10 +127,16 @@
             android:enabled="true"
             android:exported="true">
             <intent-filter>
-                <action android:name="com.yongf.smartguard.clear"/>
+                <action android:name="com.yongf.smartguard.clear" />
             </intent-filter>
         </receiver>
 
+        <service
+            android:name=".service.WatchDogService"
+            android:enabled="true"
+            android:exported="true"></service>
+
+        <activity android:name=".EnterAppLockPWDActivity"></activity>
     </application>
 
 </manifest>

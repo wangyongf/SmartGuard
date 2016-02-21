@@ -10,37 +10,38 @@ import android.view.View;
 
 import com.yongf.smartguard.service.AddressService;
 import com.yongf.smartguard.service.CallSMSSafeService;
+import com.yongf.smartguard.service.WatchDogService;
 import com.yongf.smartguard.ui.SettingClickView;
 import com.yongf.smartguard.ui.SettingItemView;
 import com.yongf.smartguard.utils.ServiceUtils;
 
 public class SettingActivity extends AppCompatActivity {
 
+    final String[] items = {"半透明", "活力橙", "卫士蓝", "金属灰", "苹果绿"};
     /**
      * 设置是否开启自动更新
      */
     private SettingItemView siv_update;
-
     private SharedPreferences sp;
-
     /**
      * 设置是否开启来电显示号码归属地
      */
     private SettingItemView siv_show_address;
     private Intent showAddress;
-
     /**
      * 黑名单拦截的设置
      */
     private SettingItemView siv_call_sms_safe;
     private Intent callSMSSafeIntent;
-
+    /**
+     * 程序锁的设置
+     */
+    private SettingItemView siv_watch_dog;
+    private Intent watchDogIntent;
     /**
      * 设置归属地显示框背景
      */
     private SettingClickView scv_changebg;
-
-    final String[] items = {"半透明", "活力橙", "卫士蓝", "金属灰", "苹果绿"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,6 +127,30 @@ public class SettingActivity extends AppCompatActivity {
                     //变为选中状态
                     siv_call_sms_safe.setChecked(true);
                     startService(callSMSSafeIntent);
+
+                }
+            }
+        });
+
+        //程序锁的设置
+        siv_watch_dog = (SettingItemView) findViewById(R.id.siv_watch_dog);
+        watchDogIntent = new Intent(this, WatchDogService.class);
+
+        //我觉得这里的处理有问题！
+        boolean isWatchDogServiceRunning = ServiceUtils.isServiceRunning(SettingActivity.this, "com.yongf.smartguard.service.WatchDogService");
+        siv_watch_dog.setChecked(isWatchDogServiceRunning);
+
+        siv_watch_dog.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (siv_watch_dog.isChecked()) {
+                    //变为非选中状态
+                    siv_watch_dog.setChecked(false);
+                    stopService(watchDogIntent);
+                } else {
+                    //变为选中状态
+                    siv_watch_dog.setChecked(true);
+                    startService(watchDogIntent);
 
                 }
             }

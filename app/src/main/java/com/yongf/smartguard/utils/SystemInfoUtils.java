@@ -3,6 +3,9 @@ package com.yongf.smartguard.utils;
 import android.annotation.TargetApi;
 import android.app.ActivityManager;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.os.Build;
 
 import java.io.BufferedReader;
@@ -11,6 +14,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -30,6 +34,7 @@ public class SystemInfoUtils {
 
     /**
      * 获取正在运行的进程的数量
+     *
      * @param context
      * @return
      */
@@ -44,6 +49,7 @@ public class SystemInfoUtils {
 
     /**
      * 获取手机可用的剩余内存
+     *
      * @param context 上下文
      * @return
      */
@@ -57,6 +63,7 @@ public class SystemInfoUtils {
 
     /**
      * 获取手机可用的总内存
+     *
      * @param context 上下文
      * @return
      */
@@ -71,6 +78,7 @@ public class SystemInfoUtils {
 
     /**
      * 获取手机可用的总内存--适用于Android2.3
+     *
      * @param context 上下文
      * @return long byte
      */
@@ -102,4 +110,40 @@ public class SystemInfoUtils {
         }
         return -1;
     }
+
+    /**
+     * 获得属于桌面的应用的应用包名称
+     *
+     * @param context 上下文
+     * @return 返回包含所有包名的字符串列表
+     */
+    public static List<String> getHomes(Context context) {
+        List<String> names = new ArrayList<String>();
+        PackageManager packageManager = context.getPackageManager();
+        //属性
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        List<ResolveInfo> resolveInfo = packageManager.queryIntentActivities(intent,
+                PackageManager.MATCH_DEFAULT_ONLY);
+        for (ResolveInfo ri : resolveInfo) {
+            names.add(ri.activityInfo.packageName);
+            System.out.println(ri.activityInfo.packageName);
+        }
+
+        return names;
+    }
+
+    /**
+     * 判断当前界面是否是桌面
+     *
+     * @param context
+     * @param homePackageNames 具有桌面程序意图的程序包名集合
+     */
+    public static boolean isHome(Context context, List<String> homePackageNames) {
+        ActivityManager mActivityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningTaskInfo> rti = mActivityManager.getRunningTasks(1);
+
+        return homePackageNames.contains(rti.get(0).topActivity.getPackageName());
+    }
+
 }
