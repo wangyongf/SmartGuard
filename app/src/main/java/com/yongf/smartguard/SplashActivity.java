@@ -60,6 +60,37 @@ public class SplashActivity extends AppCompatActivity {
     private TextView tv_update_progress;
 
     private SharedPreferences sp;
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case SHOW_UPDATE_DIALOG:    //显示升级的对话框
+                    System.out.println("SplashActivity.handleMessage" + "显示升级的对话框");
+                    showUpdateDialog();
+                    break;
+                case ENTER_HOME:    //进入主界面
+                    enterHome();
+                    break;
+                case URL_ERROR:     //URL错误
+                    enterHome();
+                    Toast.makeText(getApplicationContext(), "URL错误", Toast.LENGTH_SHORT).show();
+                    break;
+                case NETWORK_ERROR:     //网络错误
+                    enterHome();
+                    Toast.makeText(getApplicationContext(), "网络异常", Toast.LENGTH_SHORT).show();
+                    break;
+                case JSON_ERROR:    //JSON解析出错
+                    enterHome();
+                    Toast.makeText(getApplicationContext(), "JSON解析出错", Toast.LENGTH_SHORT).show();
+                    break;
+                case PROTOCOL_ERROR:    //协议异常
+                    enterHome();
+                    Toast.makeText(SplashActivity.this, "协议异常", Toast.LENGTH_SHORT).show();
+                    break;
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +107,8 @@ public class SplashActivity extends AppCompatActivity {
         initializeShortCut();
 
         //拷贝数据库
-        copyDB(this);
+        copyDB(this, "address.db");
+        copyDB(this, "antivirus.db");
 
         boolean update = sp.getBoolean("update", false);
         if (update) {
@@ -127,18 +159,50 @@ public class SplashActivity extends AppCompatActivity {
         editor.commit();
     }
 
+//    /**
+//     * //path 把address.db这个数据库拷贝到data/data/packageName/files/address.db
+//     * 这里拷贝失败，为什么？
+//     *
+//     * @param context  上下文
+//     * @param fileName 要拷贝的文件名
+//     */
+//    private void copyDB(Context context, String fileName) {
+//        //只要拷贝过一次就可
+//        try {
+//            File file = new File(getFilesDir(), fileName);
+//            if (file.exists() && file.length() > 0) {
+//                System.out.println("已经拷贝过了");
+//            } else {
+//                InputStream is = context.getResources().getAssets().open(fileName);
+//                FileOutputStream fos = new FileOutputStream(file);
+//                byte[] buffer = new byte[1024];
+//                int len = 0;
+//                while ((len = is.read(buffer)) != -1) {
+//                    fos.write(buffer, 0, len);
+//                }
+//                is.close();
+//                fos.close();
+//            }
+//
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
+
     /**
      * //path 把address.db这个数据库拷贝到data/data/packageName/files/address.db
      * 这里拷贝失败，为什么？
+     * @param context 上下文
+     * @param  fileName 要拷贝的文件名
      */
-    private void copyDB(Context context) {
+    private void copyDB(Context context, String fileName) {
         //只要拷贝过一次就可
         try {
-            File file = new File(getFilesDir(), "address.db");
+            File file = new File(getFilesDir(), fileName);
             if (file.exists() && file.length() > 0) {
                 System.out.println("已经拷贝过了");
             } else {
-                InputStream is = context.getResources().getAssets().open("address.db");
+                InputStream is = context.getResources().getAssets().open(fileName);
                 FileOutputStream fos = new FileOutputStream(file);
                 byte[] buffer = new byte[1024];
                 int len = 0;
@@ -153,38 +217,6 @@ public class SplashActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
-
-    private Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            switch (msg.what) {
-                case SHOW_UPDATE_DIALOG:    //显示升级的对话框
-                    System.out.println("SplashActivity.handleMessage" + "显示升级的对话框");
-                    showUpdateDialog();
-                    break;
-                case ENTER_HOME:    //进入主界面
-                    enterHome();
-                    break;
-                case URL_ERROR:     //URL错误
-                    enterHome();
-                    Toast.makeText(getApplicationContext(), "URL错误", Toast.LENGTH_SHORT).show();
-                    break;
-                case NETWORK_ERROR:     //网络错误
-                    enterHome();
-                    Toast.makeText(getApplicationContext(), "网络异常", Toast.LENGTH_SHORT).show();
-                    break;
-                case JSON_ERROR:    //JSON解析出错
-                    enterHome();
-                    Toast.makeText(getApplicationContext(), "JSON解析出错", Toast.LENGTH_SHORT).show();
-                    break;
-                case PROTOCOL_ERROR:    //协议异常
-                    enterHome();
-                    Toast.makeText(SplashActivity.this, "协议异常", Toast.LENGTH_SHORT).show();
-                    break;
-            }
-        }
-    };
 
     /**
      * 弹出升级对话框

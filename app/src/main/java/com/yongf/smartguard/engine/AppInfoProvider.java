@@ -20,6 +20,7 @@ import java.util.List;
  * Date: 2016/2/14 11:35
  * Details:
  * 业务方法，用来提供手机里面安装的所有的应用程序信息
+ *
  * @author Scott Wang 1059613472@qq.com
  * @version 1.0
  */
@@ -27,7 +28,8 @@ public class AppInfoProvider {
 
     /**
      * 获取所有的安装的应用程序的信息
-     * @param  context 上下文
+     *
+     * @param context 上下文
      * @return
      */
     public static List<AppInfo> getAppInfos(Context context) {
@@ -42,6 +44,12 @@ public class AppInfoProvider {
             Drawable icon = packageInfo.applicationInfo.loadIcon(pm);
             String appName = packageInfo.applicationInfo.loadLabel(pm).toString();
             int flags = packageInfo.applicationInfo.flags;      //应用程序信息的标记，相当于用户提交的答卷
+            int uid = packageInfo.applicationInfo.uid;
+            appInfo.setUid(uid);    //操作系统分配给应程序的固定编号，一旦应用程序被装到手机就不变了。
+
+//            File rcvFile = new File("/proc/uid_stat/" + uid + "/tcp_rcv");
+//            File sndFile = new File("/proc/uid_stat/" + uid + "/tcp_snd");
+
             if ((flags & ApplicationInfo.FLAG_SYSTEM) == 0) {
                 //用户程序
                 appInfo.setUserApp(true);

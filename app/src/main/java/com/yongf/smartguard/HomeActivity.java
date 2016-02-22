@@ -21,22 +21,18 @@ import com.yongf.smartguard.utils.MD5Utils;
 
 public class HomeActivity extends AppCompatActivity {
 
-    private GridView list_home;
-
-    private MyAdapter adapter;
-
     private static String[] names = {
             "手机防盗", "通讯卫士", "软件管理",
             "进程管理", "流量统计", "手机杀毒",
             "缓存清理", "高级工具", "设置中心"
     };
-
     private static int[] ids = {
             R.mipmap.safe, R.mipmap.callmsgsafe, R.mipmap.app,
             R.mipmap.taskmanager, R.mipmap.netmanager, R.mipmap.trojan,
             R.mipmap.sysoptimize, R.mipmap.atools, R.mipmap.settings
     };
-
+    private GridView list_home;
+    private MyAdapter adapter;
     private SharedPreferences sp;
 
     private EditText et_set_pwd;
@@ -80,7 +76,17 @@ public class HomeActivity extends AppCompatActivity {
                         startActivity(intent);
 
                         break;
-                    case 7:     //进入高级工具
+                    case 4:     //流量统计
+                        intent = new Intent(HomeActivity.this, TrafficManagerActivity.class);
+                        startActivity(intent);
+
+                        break;
+                    case 5:     //手机杀毒
+                        intent = new Intent(HomeActivity.this, AntiVirusActivity.class);
+                        startActivity(intent);
+
+                        break;
+                    case 7:     //高级工具
                         intent = new Intent(HomeActivity.this, AtoolsActivity.class);
                         startActivity(intent);
 
@@ -138,7 +144,7 @@ public class HomeActivity extends AppCompatActivity {
                 if (pwd.equals(pwd_confirm)) {
                     //一致的话，就保存密码，把对话框消掉，进入手机防盗页面
                     SharedPreferences.Editor editor = sp.edit();
-                    editor.putString("password", MD5Utils.md5Password(pwd));      //保存加密后的密码
+                    editor.putString("password", MD5Utils.getTextMD5Signature(pwd));      //保存加密后的密码
                     editor.commit();
 
                     alertDialog.dismiss();
@@ -186,7 +192,7 @@ public class HomeActivity extends AppCompatActivity {
                     Toast.makeText(HomeActivity.this, "密码为空", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                if (MD5Utils.md5Password(pwd).equals(savedPwd)) {
+                if (MD5Utils.getTextMD5Signature(pwd).equals(savedPwd)) {
                     //密码正确
                     alertDialog.dismiss();
                     System.out.println("把对话框消掉，进入手机防盗页面");
@@ -207,6 +213,7 @@ public class HomeActivity extends AppCompatActivity {
 
     /**
      * 判断是否设置过密码
+     *
      * @return 设置过密码返回true；否则返回false
      */
     private boolean isPasswordSet() {

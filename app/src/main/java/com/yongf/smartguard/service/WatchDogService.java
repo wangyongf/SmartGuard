@@ -63,6 +63,7 @@ public class WatchDogService extends Service {
             @Override
             public void run() {
                 while (flag) {
+                    //noinspection deprecation,deprecation
                     List<ActivityManager.RunningTaskInfo> infos = am.getRunningTasks(1);
                     String packName = infos.get(0).topActivity.getPackageName();
 //                    System.out.println("packName = " + packName);
@@ -77,6 +78,7 @@ public class WatchDogService extends Service {
                     if (protectPackNames.contains(packName)) {      //查询内存，效率高很多！
 
                         //判断这个应用程序是否需要临时停止保护
+                        //noinspection StatementWithEmptyBody
                         if (packName.equals(tempStopProtectPackName)) {
 
                         } else {

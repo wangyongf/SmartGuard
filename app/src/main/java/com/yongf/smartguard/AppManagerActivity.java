@@ -455,9 +455,9 @@ public class AppManagerActivity extends AppCompatActivity implements View.OnClic
             holder.tv_app_name.setText(appInfo.getAppName());
 //            holder.tv_app_location.setText(appInfo.getl);
             if (appInfo.isInRam()) {
-                holder.tv_app_location.setText("手机内存");
+                holder.tv_app_location.setText("手机内存" + " uid:" + appInfo.getUid());
             } else {
-                holder.tv_app_location.setText("外部存储");
+                holder.tv_app_location.setText("外部存储" + " uid:" + appInfo.getUid());
             }
 
             if (dao.find(appInfo.getPackageName())) {

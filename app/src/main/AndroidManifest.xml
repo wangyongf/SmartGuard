@@ -134,12 +134,14 @@
         <service
             android:name=".service.WatchDogService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true" />
 
         <activity
             android:name=".EnterAppLockPWDActivity"
             android:excludeFromRecents="true"
-            android:launchMode="singleInstance"></activity>
+            android:launchMode="singleInstance" />
+        <activity android:name=".TrafficManagerActivity"></activity>
+        <activity android:name=".AntiVirusActivity"></activity>
     </application>
 
 </manifest>

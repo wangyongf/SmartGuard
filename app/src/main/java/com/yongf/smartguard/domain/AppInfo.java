@@ -21,6 +21,15 @@ public class AppInfo {
     private String packageName;
     private boolean inRam;
     private boolean userApp;
+    private int uid;
+
+    public int getUid() {
+        return uid;
+    }
+
+    public void setUid(int uid) {
+        this.uid = uid;
+    }
 
     @Override
     public String toString() {
