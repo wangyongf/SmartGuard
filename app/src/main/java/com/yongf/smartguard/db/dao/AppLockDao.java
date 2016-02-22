@@ -2,10 +2,14 @@ package com.yongf.smartguard.db.dao;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.yongf.smartguard.db.AppLockDBOpenHelper;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Description:
@@ -23,6 +27,7 @@ import com.yongf.smartguard.db.AppLockDBOpenHelper;
 public class AppLockDao {
 
     private AppLockDBOpenHelper helper;
+    private Context context;
 
     /**
      * 构造方法
@@ -31,6 +36,7 @@ public class AppLockDao {
      */
     public AppLockDao(Context context) {
         helper = new AppLockDBOpenHelper(context);
+        this.context = context;
     }
 
     /**
@@ -45,6 +51,14 @@ public class AppLockDao {
         db.insert("applock", null, values);
 
         db.close();
+
+        sendBroadcast();
+    }
+
+    private void sendBroadcast() {
+        Intent intent = new Intent();
+        intent.setAction("com.yongf.smartguard.applockchange");
+        context.sendBroadcast(intent);
     }
 
     /**
@@ -57,6 +71,8 @@ public class AppLockDao {
         db.delete("applock", "packname = ?", new String[]{packName});
 
         db.close();
+
+        sendBroadcast();
     }
 
     /**
@@ -76,5 +92,23 @@ public class AppLockDao {
         db.close();
 
         return result;
+    }
+
+    /**
+     * 查询全部的包名
+     *
+     * @return
+     */
+    public List<String> findAll() {
+        List<String> protectPackNames = new ArrayList<>();
+        SQLiteDatabase db = helper.getReadableDatabase();
+        Cursor cursor = db.query("applock", new String[]{"packname"}, null, null, null, null, null);
+        while (cursor.moveToNext()) {
+            protectPackNames.add(cursor.getString(0));
+        }
+        cursor.close();
+        db.close();
+
+        return protectPackNames;
     }
 }

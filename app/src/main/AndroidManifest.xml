@@ -136,7 +136,10 @@
             android:enabled="true"
             android:exported="true"></service>
 
-        <activity android:name=".EnterAppLockPWDActivity"></activity>
+        <activity
+            android:name=".EnterAppLockPWDActivity"
+            android:excludeFromRecents="true"
+            android:launchMode="singleInstance"></activity>
     </application>
 
 </manifest>
