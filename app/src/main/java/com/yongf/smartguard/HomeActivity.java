@@ -86,6 +86,11 @@ public class HomeActivity extends AppCompatActivity {
                         startActivity(intent);
 
                         break;
+                    case 6:     //缓存清理
+                        intent = new Intent(HomeActivity.this, ClearCacheActivity.class);
+                        startActivity(intent);
+
+                        break;
                     case 7:     //高级工具
                         intent = new Intent(HomeActivity.this, AtoolsActivity.class);
                         startActivity(intent);

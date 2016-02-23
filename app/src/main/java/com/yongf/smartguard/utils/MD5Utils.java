@@ -43,13 +43,13 @@ public class MD5Utils {
      * @param path 文件路径
      * @return 文件的SHA1签名
      */
-    public static String getFileSHA1Signature(String path) {
+    public static String getFileMD5Signature(String path) {
         //获取一个文件的特征信息，签名信息
         File file = new File(path);
 
         //SHA1
         try {
-            MessageDigest digest = MessageDigest.getInstance("sha1");
+            MessageDigest digest = MessageDigest.getInstance("md5");
             FileInputStream fis = new FileInputStream(file);
             byte[] buffer = new byte[1024];
             int len = -1;
