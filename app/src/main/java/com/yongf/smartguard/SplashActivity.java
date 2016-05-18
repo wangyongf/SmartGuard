@@ -107,8 +107,8 @@ public class SplashActivity extends AppCompatActivity {
         initializeShortCut();
 
         //拷贝数据库
-        copyDB(this, "address.db");
-        copyDB(this, "antivirus.db");
+        copyDB(this, "address", "db");
+        copyDB(this, "antivirus", "db");
 
         boolean update = sp.getBoolean("update", false);
         if (update) {
@@ -120,7 +120,7 @@ public class SplashActivity extends AppCompatActivity {
                 @Override
                 public void run() {
                     //进入主页面
-                   enterHome();
+                    enterHome();
                 }
             }, 2000);
         }
@@ -129,6 +129,25 @@ public class SplashActivity extends AppCompatActivity {
         AlphaAnimation alphaAnimation = new AlphaAnimation(0.2f, 1.0f);
         alphaAnimation.setDuration(1000);
         findViewById(R.id.rl_root_splash).startAnimation(alphaAnimation);
+    }
+
+    /**
+     * 得到应用程序的版本信息
+     *
+     * @return 版本
+     */
+    private String getVersionName() {
+        //用来管理手机的APK
+        PackageManager packageManager = getPackageManager();
+        //得到指定APK的功能清单文件
+        try {
+            PackageInfo packageInfo = packageManager.getPackageInfo(getPackageName(), 0);
+            return packageInfo.versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return "";
     }
 
     /**
@@ -159,154 +178,59 @@ public class SplashActivity extends AppCompatActivity {
         editor.commit();
     }
 
-//    /**
-//     * //path 把address.db这个数据库拷贝到data/data/packageName/files/address.db
-//     * 这里拷贝失败，为什么？
-//     *
-//     * @param context  上下文
-//     * @param fileName 要拷贝的文件名
-//     */
-//    private void copyDB(Context context, String fileName) {
-//        //只要拷贝过一次就可
-//        try {
-//            File file = new File(getFilesDir(), fileName);
-//            if (file.exists() && file.length() > 0) {
-//                System.out.println("已经拷贝过了");
-//            } else {
-//                InputStream is = context.getResources().getAssets().open(fileName);
-//                FileOutputStream fos = new FileOutputStream(file);
-//                byte[] buffer = new byte[1024];
-//                int len = 0;
-//                while ((len = is.read(buffer)) != -1) {
-//                    fos.write(buffer, 0, len);
-//                }
-//                is.close();
-//                fos.close();
-//            }
-//
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
-
     /**
      * //path 把address.db这个数据库拷贝到data/data/packageName/files/address.db
-     * 这里拷贝失败，为什么？
-     * @param context 上下文
-     * @param  fileName 要拷贝的文件名
+     *
+     * @param context            上下文
+     * @param fileNameWithoutExt 文件名(不包含扩展名)
+     * @param extension          文件扩展名
      */
-    private void copyDB(Context context, String fileName) {
+    private void copyDB(Context context, String fileNameWithoutExt, String extension) {
+        String fileName = fileNameWithoutExt + "." + extension;
+
+        boolean copy = sp.getBoolean("copy_" + fileNameWithoutExt, false);
+        if (copy) {
+            System.out.println("已经拷贝过了");
+
+            return;
+        }
+
         //只要拷贝过一次就可
+        FileOutputStream fos = null;
+        InputStream is = null;
         try {
             File file = new File(getFilesDir(), fileName);
-            if (file.exists() && file.length() > 0) {
-                System.out.println("已经拷贝过了");
-            } else {
-                InputStream is = context.getResources().getAssets().open(fileName);
-                FileOutputStream fos = new FileOutputStream(file);
-                byte[] buffer = new byte[1024];
-                int len = 0;
-                while((len = is.read(buffer)) != -1) {
-                    fos.write(buffer, 0, len);
-                }
-                is.close();
-                fos.close();
+            is = context.getResources().getAssets().open(fileName);
+            fos = new FileOutputStream(file);
+            byte[] buffer = new byte[1024];
+            int len = 0;
+            while ((len = is.read(buffer)) != -1) {
+                fos.write(buffer, 0, len);
             }
 
+            copy = true;
         } catch (IOException e) {
             e.printStackTrace();
-        }
-    }
+        } finally {
+            SharedPreferences.Editor editor = sp.edit();
+            editor.putBoolean("copy_" + fileNameWithoutExt, copy);
 
-    /**
-     * 弹出升级对话框
-     */
-    private void showUpdateDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("新版本来了！");
-//        builder.setCancelable(false);       //强制升级
-        builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
-            @Override
-            public void onCancel(DialogInterface dialog) {
-                //进入主页面
-                enterHome();
-                dialog.dismiss();
-            }
-        });
-        builder.setMessage(description);
-        builder.setPositiveButton("火速升级", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                //下载APK，并且替换安装
-                if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-                    //SDcard存在
-                    //afinal
-                    FinalHttp finalHttp = new FinalHttp();
-                    finalHttp.download(apkUrl, Environment.getExternalStorageDirectory().getAbsolutePath() + "/SmartGuard2.0.apk", new AjaxCallBack<File>() {
-                        @Override
-                        public void onLoading(long count, long current) {
-                            super.onLoading(count, current);
-                            tv_update_progress.setVisibility(View.VISIBLE);
-                            //当前下载百分比
-                            int progress = (int) (current * 100 / count);
-
-                            tv_update_progress.setText("下载进度：" + progress + "%");
-                        }
-
-                        @Override
-                        public void onSuccess(File file) {
-                            tv_update_progress.setVisibility(View.GONE);
-
-                            super.onSuccess(file);
-
-                            installAPK(file);
-                        }
-
-                        /**
-                         * 安装APK
-                         * @param file
-                         */
-                        private void installAPK(File file) {
-                            Intent intent = new Intent();
-                            intent.setAction("android.intent.action.VIEW");
-                            intent.addCategory("android.intent.category.DEFAULT");
-                            intent.setDataAndType(Uri.fromFile(file), "application/vnd.android.package-archive");
-
-                            startActivity(intent);
-                        }
-
-                        @Override
-                        public void onFailure(Throwable t, int errorNo, String strMsg) {
-                            tv_update_progress.setVisibility(View.GONE);
-
-                            t.printStackTrace();
-                            Toast.makeText(getApplicationContext(), "下载失败", Toast.LENGTH_LONG).show();
-                            super.onFailure(t, errorNo, strMsg);
-                        }
-                    });
-                } else {
-                    Toast.makeText(getApplicationContext(), "没有SD卡，请安装后重试", Toast.LENGTH_SHORT).show();
-                    return;
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
-        });
-        builder.setNegativeButton("残忍拒绝", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                //暂不升级，进入主页面
-                dialog.dismiss();
-                enterHome();
+
+            if (fos != null) {
+                try {
+                    fos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
-        });
-        builder.show();
-    }
-
-    private void enterHome() {
-        Intent intent = new Intent(this, HomeActivity.class);
-        startActivity(intent);
-
-        //关闭当前页面
-        finish();
+        }
     }
 
     /**
@@ -385,21 +309,95 @@ public class SplashActivity extends AppCompatActivity {
         }.start();
     }
 
-    /**
-     * 得到应用程序的版本信息
-     * @return 版本
-     */
-    private String getVersionName() {
-        //用来管理手机的APK
-        PackageManager packageManager = getPackageManager();
-        //得到指定APK的功能清单文件
-        try {
-            PackageInfo packageInfo = packageManager.getPackageInfo(getPackageName(), 0);
-            return packageInfo.versionName;
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
+    private void enterHome() {
+        Intent intent = new Intent(this, HomeActivity.class);
+        startActivity(intent);
 
-        return "";
+        //关闭当前页面
+        finish();
+    }
+
+    /**
+     * 弹出升级对话框
+     */
+    private void showUpdateDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("新版本来了！");
+//        builder.setCancelable(false);       //强制升级
+        builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                //进入主页面
+                enterHome();
+                dialog.dismiss();
+            }
+        });
+        builder.setMessage(description);
+        builder.setPositiveButton("火速升级", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //下载APK，并且替换安装
+                if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+                    //SDcard存在
+                    //afinal
+                    FinalHttp finalHttp = new FinalHttp();
+                    finalHttp.download(apkUrl, Environment.getExternalStorageDirectory().getAbsolutePath() + "/SmartGuard2.0.apk", new AjaxCallBack<File>() {
+                        @Override
+                        public void onLoading(long count, long current) {
+                            super.onLoading(count, current);
+                            tv_update_progress.setVisibility(View.VISIBLE);
+                            //当前下载百分比
+                            int progress = (int) (current * 100 / count);
+
+                            tv_update_progress.setText("下载进度：" + progress + "%");
+                        }
+
+                        @Override
+                        public void onSuccess(File file) {
+                            tv_update_progress.setVisibility(View.GONE);
+
+                            super.onSuccess(file);
+
+                            installAPK(file);
+                        }
+
+                        /**
+                         * 安装APK
+                         *
+                         * @param file
+                         */
+                        private void installAPK(File file) {
+                            Intent intent = new Intent();
+                            intent.setAction("android.intent.action.VIEW");
+                            intent.addCategory("android.intent.category.DEFAULT");
+                            intent.setDataAndType(Uri.fromFile(file), "application/vnd.android.package-archive");
+
+                            startActivity(intent);
+                        }
+
+                        @Override
+                        public void onFailure(Throwable t, int errorNo, String strMsg) {
+                            tv_update_progress.setVisibility(View.GONE);
+
+                            t.printStackTrace();
+                            Toast.makeText(getApplicationContext(), "下载失败", Toast.LENGTH_LONG).show();
+                            super.onFailure(t, errorNo, strMsg);
+                        }
+                    });
+                } else {
+                    Toast.makeText(getApplicationContext(), "没有SD卡，请安装后重试", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+            }
+        });
+        builder.setNegativeButton("残忍拒绝", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //暂不升级，进入主页面
+                dialog.dismiss();
+                enterHome();
+            }
+        });
+        builder.show();
     }
 }
