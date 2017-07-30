@@ -94,7 +94,7 @@
         <activity android:name=".AtoolsActivity" />
         <activity android:name=".NumberAddressQueryActivity" />
         <activity android:name=".DoubleClickActivity" />
-        <activity android:name=".CallSMSSafeActivity" />
+        <activity android:name=".CallSmsSafeActivity" />
 
         <service
             android:name=".service.CallSMSSafeService"

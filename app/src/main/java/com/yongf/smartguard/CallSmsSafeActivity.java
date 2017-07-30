@@ -23,7 +23,7 @@ import com.yongf.smartguard.domain.BlackListInfo;
 
 import java.util.List;
 
-public class CallSMSSafeActivity extends AppCompatActivity {
+public class CallSmsSafeActivity extends AppCompatActivity {
 
     private ListView lv_call_sms_safe;
 
@@ -179,7 +179,7 @@ public class CallSMSSafeActivity extends AppCompatActivity {
             holder.iv_delete_black_number.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(CallSMSSafeActivity.this);
+                    AlertDialog.Builder builder = new AlertDialog.Builder(CallSmsSafeActivity.this);
                     builder.setTitle("警告");
                     builder.setMessage("确定要删除这条记录吗?");
                     builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {

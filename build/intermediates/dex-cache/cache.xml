@@ -2,39 +2,49 @@
 <items version="2" >
 
     <item
-        jar="N:\MyProjects\android\SmartGuard\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.1.1\jars\classes.jar"
+        is-multidex="false"
+        jar="/Users/laoma/.android/build-cache/93583888fb624b5fa319833db65f6a3ca8f0b5c4/output/jars/classes.jar"
         jumboMode="false"
-        revision="23.0.2"
-        sha1="6cbc7773921fcfedbe55657578f0cbfe614778dc">
-        <dex dex="N:\MyProjects\android\SmartGuard\app\build\intermediates\pre-dexed\debug\classes-c5fc663ce8f5aa92da10b7ace77559f22cbeff52.jar" />
-    </item>
-    <item
-        jar="N:\MyProjects\android\SmartGuard\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.1.1\jars\libs\internal_impl-23.1.1.jar"
-        jumboMode="false"
-        revision="23.0.2"
-        sha1="a4de9c81ae239414e1ed0f86441b02abaf29bca9">
-        <dex dex="N:\MyProjects\android\SmartGuard\app\build\intermediates\pre-dexed\debug\internal_impl-23.1.1-0580a5ea0b40cba103c7637bdea8cedb22540538.jar" />
-    </item>
-    <item
-        jar="N:\MyProjects\android\SmartGuard\app\libs\afinal_0.5_bin.jar"
-        jumboMode="false"
-        revision="23.0.2"
-        sha1="89729e3bc7f76890363b10e1e0dc5e57964c7807">
-        <dex dex="N:\MyProjects\android\SmartGuard\app\build\intermediates\pre-dexed\debug\afinal_0.5_bin-90ad6937902a7ee456a8391e0ed7508ab70b8ee0.jar" />
-    </item>
-    <item
-        jar="N:\MyProjects\android\SmartGuard\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\23.1.1\jars\classes.jar"
-        jumboMode="false"
-        revision="23.0.2"
+        optimize="true"
+        revision="25.0.0"
         sha1="5c5699834e9722f1c288fea2de82725d078ba127">
-        <dex dex="N:\MyProjects\android\SmartGuard\app\build\intermediates\pre-dexed\debug\classes-760354187a667d4c08ef409738f424182e7cacb7.jar" />
+        <dex dex="/Users/laoma/Anything/projects/Android/SmartGuard/app/build/intermediates/pre-dexed/debug/classes_098f736f12b19c41cd57f5cd91522d2b5d75f48b.jar" />
     </item>
     <item
-        jar="G:\Android\sdk\extras\android\m2repository\com\android\support\support-annotations\23.1.1\support-annotations-23.1.1.jar"
+        is-multidex="false"
+        jar="/Users/laoma/Library/Android/sdk/extras/android/m2repository/com/android/support/support-annotations/23.1.1/support-annotations-23.1.1.jar"
         jumboMode="false"
-        revision="23.0.2"
+        optimize="true"
+        revision="25.0.0"
         sha1="8d680ba5a623724d1fb0e81c36a790f023a6cede">
-        <dex dex="N:\MyProjects\android\SmartGuard\app\build\intermediates\pre-dexed\debug\support-annotations-23.1.1-45b171d99ab06276e239d93d69e84f888e34e264.jar" />
+        <dex dex="/Users/laoma/Anything/projects/Android/SmartGuard/app/build/intermediates/pre-dexed/debug/support-annotations-23.1.1_dc54461d3bf57e38f261cc9b81b09cf669d9da7f.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/laoma/.android/build-cache/51241e9a5d27f1d1b888665e346c9a7797dcb088/output/jars/libs/internal_impl-23.1.1.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="a4de9c81ae239414e1ed0f86441b02abaf29bca9">
+        <dex dex="/Users/laoma/Anything/projects/Android/SmartGuard/app/build/intermediates/pre-dexed/debug/internal_impl-23.1.1_af0746b4437e39aa7ff5d1bfe7fa07ebf9e26321.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/laoma/.android/build-cache/51241e9a5d27f1d1b888665e346c9a7797dcb088/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="6cbc7773921fcfedbe55657578f0cbfe614778dc">
+        <dex dex="/Users/laoma/Anything/projects/Android/SmartGuard/app/build/intermediates/pre-dexed/debug/classes_e3a7fae937dc45d899db4e6d72f860a696e09a44.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/laoma/Anything/projects/Android/SmartGuard/app/libs/afinal_0.5_bin.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="89729e3bc7f76890363b10e1e0dc5e57964c7807">
+        <dex dex="/Users/laoma/Anything/projects/Android/SmartGuard/app/build/intermediates/pre-dexed/debug/afinal_0.5_bin_18f0bdf32f1f1605f2c8003cfe56eb4a56e1bc45.jar" />
     </item>
 
 </items>

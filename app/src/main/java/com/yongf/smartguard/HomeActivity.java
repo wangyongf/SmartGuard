@@ -62,7 +62,7 @@ public class HomeActivity extends AppCompatActivity {
 
                         break;
                     case 1:     //加载黑名单拦截界面
-                        intent = new Intent(HomeActivity.this, CallSMSSafeActivity.class);
+                        intent = new Intent(HomeActivity.this, CallSmsSafeActivity.class);
                         startActivity(intent);
 
                         break;
