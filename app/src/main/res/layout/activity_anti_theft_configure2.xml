@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:yongf="http://schemas.android.com/apk/res/com.yongf.smartguard"
+    xmlns:yongf="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     tools:context="com.yongf.smartguard.AntiTheftConfigureActivity1">
 
