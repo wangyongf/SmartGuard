@@ -24,8 +24,10 @@ public class AtoolsActivity extends AppCompatActivity {
      * @param view
      */
     public void numberQuery(View view) {
-        Intent intent = new Intent(this, NumberAddressQueryActivity.class);
-        startActivity(intent);
+//        Intent intent = new Intent(this, NumberAddressQueryActivity.class);
+//        startActivity(intent);
+
+        //ignored
     }
 
     /**

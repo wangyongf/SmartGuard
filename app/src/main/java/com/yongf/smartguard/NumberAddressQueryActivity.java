@@ -59,7 +59,7 @@ public class NumberAddressQueryActivity extends AppCompatActivity {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.length() >= 3) {
                     //查询数据库，并且显示结果
-                    String address = NumberAddressQueryUtils.queryNumber(s.toString());
+                    String address = NumberAddressQueryUtils.queryNumber(getApplicationContext(), s.toString());
                     tv_query_result.setText(address);
                 }
             }
@@ -96,7 +96,7 @@ public class NumberAddressQueryActivity extends AppCompatActivity {
 
         //2. 本地查询
         //写一个工具类，去查询数据库
-        String address = NumberAddressQueryUtils.queryNumber(phoneNum);
+        String address = NumberAddressQueryUtils.queryNumber(getApplicationContext(), phoneNum);
         tv_query_result.setText(address);
     }
 }

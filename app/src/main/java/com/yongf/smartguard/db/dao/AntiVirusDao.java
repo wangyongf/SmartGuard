@@ -1,5 +1,6 @@
 package com.yongf.smartguard.db.dao;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
@@ -24,8 +25,8 @@ public class AntiVirusDao {
      * @param md5 md5值
      * @return
      */
-    public static boolean isVirus(String md5) {
-        String path = "/data/data/com.yongf.smartguard/files/antivirus.db";
+    public static boolean isVirus(Context context, String md5) {
+        String path = context.getFilesDir() + "/antivirus.db";
         boolean result = false;
         //打开病毒数据库文件
         SQLiteDatabase db = SQLiteDatabase.openDatabase(path, null, SQLiteDatabase.OPEN_READONLY);

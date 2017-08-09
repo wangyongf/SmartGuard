@@ -134,7 +134,7 @@ public class AntiVirusActivity extends AppCompatActivity {
                     scanInfo.packName = info.packageName;
 
                     //查询SHA1信息，是否在病毒数据库里面存在
-                    if (AntiVirusDao.isVirus(signature)) {
+                    if (AntiVirusDao.isVirus(AntiVirusActivity.this, signature)) {
                         //发现病毒
                         scanInfo.isVirus = true;
                     } else {

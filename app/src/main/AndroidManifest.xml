@@ -10,7 +10,7 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.READ_SMS" />
-    <!-- <uses-permission android:name="android.permission.WRITE_SMS"/> -->
+     <uses-permission android:name="android.permission.WRITE_SMS"/>
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -21,12 +21,10 @@
     <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.READ_CALL_LOG" />
     <uses-permission android:name="android.permission.WRITE_CALL_LOG" />
-    <!-- <uses-permission android:name="android.permission.INSTALL_PACKAGES"/> -->
     <uses-permission android:name="android.permission.INSTALL_SHORTCUT" />
     <uses-permission android:name="android.permission.KILL_BACKGROUND_PROCESSES" />
     <uses-permission android:name="android.permission.GET_TASKS" />
     <uses-permission android:name="android.permission.GET_PACKAGE_SIZE" />
-    <!--<uses-permission android:name="android.permission.DELETE_CACHE_FILES"/>-->
     <uses-permission android:name="android.permission.CLEAR_APP_CACHE" />
 
     <!-- <instrumentation -->
@@ -58,11 +56,11 @@
         <activity android:name=".AntiTheftConfigureActivity4" />
         <activity android:name=".SelectContactActivity" />
 
-        <receiver android:name=".receiver.BootCompleteReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-            </intent-filter>
-        </receiver>
+        <!--<receiver android:name=".receiver.BootCompleteReceiver">-->
+            <!--<intent-filter>-->
+                <!--<action android:name="android.intent.action.BOOT_COMPLETED" />-->
+            <!--</intent-filter>-->
+        <!--</receiver>-->
         <receiver android:name=".receiver.SMSReceiver">
             <intent-filter android:priority="1000">
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
@@ -80,14 +78,8 @@
                 <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".receiver.OutCallReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.NEW_OUTGOING_CALL" />
-            </intent-filter>
-        </receiver>
 
         <service android:name=".service.GPSService" />
-        <service android:name=".service.AddressService" />
 
         <activity android:name=".GPSActivity" />
         <activity android:name=".LockScreenActivity" />

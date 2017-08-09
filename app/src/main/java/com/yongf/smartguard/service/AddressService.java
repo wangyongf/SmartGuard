@@ -53,7 +53,7 @@ public class AddressService extends Service {
 			// 这就是我们拿到的播出去的电话号码
 			String phone = getResultData();
 			// 查询数据库
-			String address = NumberAddressQueryUtils.queryNumber(phone);
+			String address = NumberAddressQueryUtils.queryNumber(getApplicationContext(), phone);
 			
 //			Toast.makeText(context, address, 1).show();
 			myToast(address);
@@ -71,7 +71,7 @@ public class AddressService extends Service {
 			case TelephonyManager.CALL_STATE_RINGING:// 来电铃声响起
 				// 查询数据库的操作
 				String address = NumberAddressQueryUtils
-						.queryNumber(incomingNumber);
+						.queryNumber(getApplicationContext(), incomingNumber);
 				
 //				Toast.makeText(getApplicationContext(), address, 1).show();
 				myToast(address);

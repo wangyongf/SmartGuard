@@ -1,23 +1,26 @@
 package com.yongf.smartguard.db.dao;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 
 /**
  * Created by yongf-new on 2016/2/7 13:16.
  */
 public class NumberAddressQueryUtils {
 
-    private static String path = "data/data/com.yongf.smartguard/files/address.db";
+    private static final String PATH_SUFFIX = "/address.db";
 
     /**
      * 查询归属地
      * @param number 查询的号码
      * @return 号码归属地
      */
-    public static String queryNumber(String number) {
+    public static String queryNumber(Context context, String number) {
         String address = number;
-        //path 把address.db这个数据库拷贝到data/data/packageName/files/address.db下
+        String path = context.getFilesDir() + PATH_SUFFIX;
+        //PATH_SUFFIX 把address.db这个数据库拷贝到data/data/packageName/files/address.db下
         SQLiteDatabase database = SQLiteDatabase.openDatabase(path, null, SQLiteDatabase.OPEN_READONLY);
 
         //手机号码 13 14 15  16 18

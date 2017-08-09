@@ -82,8 +82,8 @@ public class HomeActivity extends AppCompatActivity {
 
                         break;
                     case 5:     //手机杀毒
-                        intent = new Intent(HomeActivity.this, AntiVirusActivity.class);
-                        startActivity(intent);
+//                        intent = new Intent(HomeActivity.this, AntiVirusActivity.class);
+//                        startActivity(intent);
 
                         break;
                     case 6:     //缓存清理
