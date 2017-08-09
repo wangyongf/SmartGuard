@@ -107,7 +107,7 @@ public class GPSService extends Service {
             try {
                 is = getResources().getAssets().open("axisoffset.dat");
                 ModifyOffset offset = ModifyOffset.getInstance(is);
-                PointDouble double1 = offset.s2c(new PointDouble(location.getLongitude(), location.getLatitude()));
+                ModifyOffset.PointDouble double1 = offset.s2c(new ModifyOffset.PointDouble(location.getLongitude(), location.getLatitude()));
                 longitude = "longitude:" + offset.X + "\n";
                 latitude = "latitude:" + offset.Y + "\n";
             } catch (IOException e) {
